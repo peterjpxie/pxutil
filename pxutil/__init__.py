@@ -3,7 +3,7 @@
     pxutil
     ~~~~~
 
-    Peter Jiping Xie's personal untils.
+    Peter Jiping Xie's personal utils.
 
     :copyright: © 2019 by Peter Jiping Xie.
     :license: MIT.
