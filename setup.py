@@ -2,28 +2,27 @@
 # # coding: utf-8
 from setuptools import find_packages, setup
 
-with open('README.rst') as readme:
+with open('README.md') as readme:
     long_description = readme.read()
 
 setup(
-    name='bash',
-    description='Bash for Python',
-    version='0.6',
+    name='pxutil',
+    description='Some personal python utils',
+    version='0.1',
     long_description=long_description,
-    author='Alex Couper',
-    author_email='info@alexcouper.com',
-    url='https://github.com/alexcouper/bash',
+    author='Peter Jiping Xie',
+    author_email='peter.jp.xie@gmail.com',
+    url='https://github.com/peterjpxie/pxutil.git',
     packages=find_packages(),
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        ('License :: OSI Approved :: GNU Library or Lesser '
-         'General Public License (LGPL)'),
+        'License :: MIT',
         'Operating System :: MacOS',
         'Operating System :: POSIX',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 )
