@@ -1,2 +1,2 @@
 # pxutil
-Peter Jiping Xie's Python personal utils
+Peter Jiping Xie's personal Python utils
