@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     pxutil
     ~~~~~
@@ -13,5 +12,5 @@
 
 # __all__ = ["bash"]
 
-# from .pxutil import bash, trim_docstring, trim_docstring, grep
-from .pxutil import *
+from .pxutil import bash, trim_docstring, grep
+# from .pxutil import *
