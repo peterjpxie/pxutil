@@ -4,13 +4,13 @@ For pytest to support importing local modules, e.g. power.py, must create a __in
 """
 # Note: relative imports must use this syntax: from <> import <> 
 # from ..pxutil import bash, grep, trim_docstring
-import pxutil as px
+from pxutil import pxutil as px
 # from pxutil import bash, grep, trim_docstring
 
 def test_bash():
-    result = px.bash('ls test_pxutil.py')
-    print(result)
-    assert result.stdout == 'test_pxutil.py'
+    result = px.bash('ls')
+    # print(result)
+    assert result.returncode == 0
 
 def test_grep():
     pass
