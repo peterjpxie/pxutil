@@ -1,8 +1,14 @@
 pxutil
 ========
+
 [![Build Status](https://img.shields.io/travis/hwdsl2/setup-ipsec-vpn.svg?maxAge=1200)](https://travis-ci.org/hwdsl2/setup-ipsec-vpn)
 
-[Build Status](https://travis-ci.com/peterjpxie/pxutil)
+`Build Status
+<https://travis-ci.com/peterjpxie/pxutil>`_
+
+
+`Python
+<http://www.python.org/>`_
 
 Peter Jiping Xie's personal Python utils
 
