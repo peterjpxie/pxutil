@@ -13,11 +13,12 @@ setup(
     author='Peter Jiping Xie',
     author_email='peter.jp.xie@gmail.com',
     url='https://github.com/peterjpxie/pxutil.git',
+    license='MIT',
     packages=find_packages(),
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'License :: MIT',
+        'License :: MIT License',
         'Operating System :: MacOS',
         'Operating System :: POSIX',
         'Programming Language :: Python :: 3.5',
