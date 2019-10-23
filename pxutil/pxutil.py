@@ -2,9 +2,11 @@
 Peter Jiping Xie's personal utils
 
 """
+# __all__ = ['bash','trim_docstring','grep']
+
 import sys
 import logging
-# import shutil2 
+import re
 
 if sys.version_info < (3,5):
     raise Exception("Require python 3.5 or above.")

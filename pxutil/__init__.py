@@ -10,7 +10,5 @@
 
 # __version__ = '0.1'
 
-# __all__ = ["bash"]
-
 from .pxutil import bash, trim_docstring, grep
-# from .pxutil import *
+#from .pxutil import *
