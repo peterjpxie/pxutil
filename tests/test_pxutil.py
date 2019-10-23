@@ -6,7 +6,6 @@ For pytest to support importing local modules, e.g. power.py, must create a __in
 # from ..pxutil import bash, grep, trim_docstring
 #from pxutil import pxutil as px
 import pxutil as px
-# from pxutil import bash, grep, trim_docstring
 
 def test_bash():
     result = px.bash('ls')
