@@ -17,16 +17,17 @@ python setup.py install
 
 Usage
 =======
+::
 
-import pxutil as px
+    import pxutil as px
 
-px.bash('ls')
+    px.bash('ls')
 
-px.grep('ab','abc\ndef')
+    px.grep('ab','abc\ndef')
 
-px.trim_docstring('''
-    ab
-        cd
-    ef
-    '''
-    )
+    px.trim_docstring('''
+        ab
+            cd
+        ef
+        '''
+        )
