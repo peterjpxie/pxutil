@@ -9,12 +9,20 @@ For pytest to support importing local modules, must create a __init__.py file to
 import pxutil as px
 
 def test_bash():
-    result = px.bash('ls')
-    # print(result)
-    assert result.returncode == 0
+    ret = px.bash('ls')
+    # print(ret)
+    assert ret.returncode == 0
 
 def test_grep():
-    pass
+    ret = px.grep('de','abc\ndef')
+    # print(ret)
+    assert ret == ['def'] 
     
 def test_trim_docstring():
-    pass    
+    ret = px.trim_docstring('''
+    ab
+        cd
+    '''
+    )
+    # print(ret)
+    assert ret == 'ab\n    cd'    
