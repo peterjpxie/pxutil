@@ -18,12 +18,16 @@ log = logging.getLogger('pxutil')
                                        
 def bash(cmd):
     """    
-    subprocess.run with intuitive options to execute system command just like shell.
+    subprocess.run with intuitive options to execute system commands just like shell bash command.
     
     Inspired by https://pypi.org/project/bash/.
     
     cmd: string or list 
-    return: CompletedProcess in text (decode as utf-8)
+    return: CompletedProcess object in text (decode as utf-8), with attributes stdout, stderr and returncode.
+    
+    Usage example: 
+    ret = bash('ls')
+    print(ret.stdout, ret.stderr, ret.returncode)
     
     Warning of using shell=True: https://docs.python.org/2/library/subprocess.html#frequently-used-arguments
     """
