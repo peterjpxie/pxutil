@@ -3,7 +3,7 @@ pxutil
 .. image:: https://travis-ci.com/peterjpxie/pxutil.svg?branch=master
     :target: https://travis-ci.com/peterjpxie/pxutil
 
-Peter Jiping Xie's personal Python utils 
+Some handy Python utils
 
 Build source distribution
 =======
