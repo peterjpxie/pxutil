@@ -15,6 +15,10 @@ Install from source
 
 python setup.py install
 
+or 
+
+pip install .
+
 Usage
 =======
 ::
