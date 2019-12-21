@@ -1,0 +1,3 @@
+tests is placed outside of distributed package pxutil, so test scripts won't be distributed as part of the package pxutil which will be installed into targeted devices, which means user won't see the tests folder in his system when he installs pxutil by pip. But it is part of the source code repository and is used for unit tests and CI.
+
+To include tests as part of the distributed package, which will increase package size, move tests inside <repo root>/pxutil folder.
