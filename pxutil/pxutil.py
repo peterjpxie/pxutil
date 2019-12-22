@@ -64,6 +64,8 @@ def trim_docstring(docstring):
     
     Argument: multiple liner string, typically using triple quote.
     Return: trimmed multiple line string 
+    
+    Note: textwrap.dedent(docstring) does the same job, but not removing leading blank lines.
     """
     import sys
     if not docstring:
