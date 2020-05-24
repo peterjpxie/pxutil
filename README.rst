@@ -5,11 +5,6 @@ pxutil
 
 Some handy Python utils 
 
-Build distributions (source and binary wheel)
-=======
-
-python setup.py sdist bdist_wheel
-
 Install from source
 =======
 
@@ -18,6 +13,11 @@ python setup.py install
 or 
 
 pip install .
+
+Build distributions (source and binary wheel)
+=======
+
+python setup.py sdist bdist_wheel
 
 Usage
 =======
