@@ -1,5 +1,5 @@
 """
-Some handy utils from Peter Jiping Xie
+Some handy utils from Peter Jiping Xie  
 
 """
 # __all__ = ['bash','trim_docstring','grep']
@@ -9,7 +9,7 @@ import logging
 import re
 
 if sys.version_info < (3, 5):
-    raise Exception('Require python 3.5 or above.')
+    raise Exception("Require python 3.5 or above.")
 
 logging.basicConfig(
     level=logging.DEBUG,
