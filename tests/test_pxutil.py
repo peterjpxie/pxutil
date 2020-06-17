@@ -35,9 +35,10 @@ def test_replace_in_file():
     """
     TODO
     """
-    import tempfile
-
-    # tempfile supports only bytes format
-    with tempfile.TemporaryFile() as f:
-        f.write(b'Hello world!\Hello you.')
+    pass 
+    # import tempfile
+    # 
+    # # tempfile supports only bytes format
+    # with tempfile.TemporaryFile() as f:
+    #     f.write(b'Hello world!\Hello you.')
     
