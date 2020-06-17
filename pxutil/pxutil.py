@@ -119,7 +119,8 @@ def grep(pattern, string=None, filename=None):
     If the matched list is too big, you can modify it to use yield generator.
     """
     if string == None and filename == None:
-        return None
+        log.error('grep: No string nor filename provided in the arguments.')
+        return []
     if string != None:
         extended_pattern = ".*" + pattern + ".*"
         return re.findall(extended_pattern, string)
@@ -130,6 +131,23 @@ def grep(pattern, string=None, filename=None):
             for l in f:
                 result += re.findall(extended_pattern, l)
         return result
+
+def replace_in_file(filename, old, new, backup=None):
+    """
+    Replace in place directly on a file.
+    
+    Arguments:
+        old - old string to replace
+        new - new string 
+        backup - backup file suffix, e.g. '.bak'. None means no backup
+    """
+    import fileinput
+
+    with fileinput.FileInput(filename, inplace=True, backup=backup) as file:
+        for line in file:
+            # yes, this print will write into the file instead to stdout.
+            # end = '' so it does not print another blank new line.
+            print(line.replace(old, new), end='')   
 
 
 def test_self():

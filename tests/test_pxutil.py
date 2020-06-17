@@ -30,3 +30,14 @@ def test_trim_docstring():
     )
     # print(ret)
     assert ret == "ab\n    cd"
+
+def test_replace_in_file():
+    """
+    TODO
+    """
+    import tempfile
+
+    # tempfile supports only bytes format
+    with tempfile.TemporaryFile() as f:
+        f.write(b'Hello world!\Hello you.')
+    
