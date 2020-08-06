@@ -19,6 +19,11 @@ Build distributions (source and binary wheel)
 
 python setup.py sdist bdist_wheel
 
+Publish to pypi
+=======
+
+twine upload dist/*
+
 Usage
 =======
 ::
