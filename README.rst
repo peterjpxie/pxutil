@@ -17,6 +17,8 @@ pip install .
 Build distributions (source and binary wheel)
 =============================================
 
+rm -rf dist/*
+
 python setup.py sdist bdist_wheel
 
 Publish to pypi
