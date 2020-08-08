@@ -44,6 +44,8 @@ Usage
 Test
 =======
 
+pip3 install -U pytest tox pytest-cov 
+
 cd to repo root folder pxutil
 
 pytest
