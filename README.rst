@@ -3,7 +3,7 @@ pxutil
 .. image:: https://travis-ci.com/peterjpxie/pxutil.svg?branch=master
     :target: https://travis-ci.com/peterjpxie/pxutil
 
-Some handy Python utils
+Some handy Python utilities
 
 Install from source
 =======
@@ -47,3 +47,7 @@ Test
 cd to repo root folder pxutil
 
 pytest
+
+or 
+
+tox
