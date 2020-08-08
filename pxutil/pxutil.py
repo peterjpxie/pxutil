@@ -1,5 +1,5 @@
 """
-Some handy utils from Peter Jiping Xie  
+Some handy utilities from Peter Jiping Xie  
 """
 # __all__ = ['bash','trim_docstring','grep']
 
