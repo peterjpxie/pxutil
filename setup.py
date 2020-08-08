@@ -4,13 +4,14 @@ from setuptools import find_packages, setup
 
 with open("README.rst") as readme:
     long_description = readme.read()
+    print(long_description)
 
 setup(
     name="pxutil",
     version="0.0.1",
     description="Some personal python utils",
     long_description=long_description,
-    long_description_content_type='text/x-rst',
+    # long_description_content_type="text/markdown", # default is rst
     author="Peter Jiping Xie",
     author_email="peter.jp.xie@gmail.com",
     url="https://github.com/peterjpxie/pxutil.git",

@@ -1,12 +1,12 @@
 pxutil
-========
+======
 .. image:: https://travis-ci.com/peterjpxie/pxutil.svg?branch=master
     :target: https://travis-ci.com/peterjpxie/pxutil
 
 Some handy Python utilities
 
 Install from source
-=======
+===================
 
 python setup.py install
 
@@ -15,17 +15,17 @@ or
 pip install .
 
 Build distributions (source and binary wheel)
-=======
+=============================================
 
 python setup.py sdist bdist_wheel
 
 Publish to pypi
-=======
+===============
 
 twine upload dist/*
 
 Usage
-=======
+=====
 ::
 
     import pxutil as px
@@ -42,7 +42,7 @@ Usage
         )
 
 Test
-=======
+====
 
 pip3 install -U pytest tox pytest-cov 
 
