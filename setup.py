@@ -9,7 +9,7 @@ with open("README.rst") as readme:
 setup(
     name="pxutil",
     version="0.0.1",
-    description="Some personal python utils",
+    description="Some handy Python utilities",
     long_description=long_description,
     # long_description_content_type="text/markdown", # default is rst
     author="Peter Jiping Xie",

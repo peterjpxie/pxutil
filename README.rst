@@ -43,13 +43,16 @@ Usage
 
 Test
 ====
+::
 
-pip3 install -U pytest tox pytest-cov 
+    pip3 install -U pytest tox pytest-cov 
 
-cd to repo root folder pxutil
+    git clone https://github.com/peterjpxie/pxutil.git
 
-pytest
+    cd pxutil
 
-or 
+    pytest
 
-tox
+    or 
+
+    tox
