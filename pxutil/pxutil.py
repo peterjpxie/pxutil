@@ -6,6 +6,7 @@ Some handy utilities from Peter Jiping Xie
 import sys
 import logging
 import re
+import locale
 
 if sys.version_info < (3, 5):
     raise Exception("Require python 3.5 or above.")
@@ -35,6 +36,7 @@ def bash(cmd):
     """
     from subprocess import run, PIPE  # , Popen, CompletedProcess
     import sys
+    import locale
 
     if sys.version_info >= (
         3,
@@ -42,15 +44,12 @@ def bash(cmd):
     ):  # version_info is actually a tuple, so compare with a tuple
         return run(cmd, shell=True, capture_output=True, text=True)
 
-    elif sys.version_info >= (3, 6):
-        # Not supported parameters: capture_output=True, text = True
-        return run(cmd, shell=True, stdout=PIPE, stderr=PIPE, encoding="utf-8")
-
-    elif sys.version_info >= (3, 5):
-        # Not supported parameters: encoding='utf-8'
+    elif sys.version_info >= (3, 5):        
+        # get system default locale encoding
+        encoding=locale.getdefaultlocale()[1] 
         r = run(cmd, shell=True, stdout=PIPE, stderr=PIPE)
-        r.stdout = r.stdout.decode("utf-8")
-        r.stderr = r.stderr.decode("utf-8")
+        r.stdout = r.stdout.decode(encoding)
+        r.stderr = r.stderr.decode(encoding)
         return r
     else:
         raise Exception("Require python 3.5 or above.")
@@ -60,7 +59,6 @@ def bash(cmd):
         stdout, stderr = p.communicate()
         code = p.returncode
         """
-
 
 def trim_docstring(docstring):
     """
