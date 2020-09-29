@@ -12,7 +12,7 @@ if sys.version_info < (3, 5):
     raise Exception("Require python 3.5 or above.")
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.WARNING,
     format="%(asctime)s ln-%(lineno)-3d %(levelname)7s: %(message)s",
     datefmt="%Y-%m-%d %I:%M:%S",
 )
