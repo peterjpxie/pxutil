@@ -147,15 +147,53 @@ def replace_in_file(filename, old, new, backup=None):
             # end = '' so it does not print another blank new line.
             print(line.replace(old, new), end='')   
 
+def time2seconds(time):
+    """ delta time string to number of seconds
 
-def test_self():
-    mystr = """
-    asd 
-    dfe 
+    time: e.g. '2d' for 2 days, supported units: d-day, h-hour, m-minute, s-second
+    return: integer number of seconds
+
+    Note: Month and year duration varies. Not worth doing for the sake of simplicity.
     """
-    print("Before trim:\n" + mystr)
-    mystr = trim_docstring(mystr)
-    print("After trim:\n" + mystr)
+    tmap = {'s':1,'m':60,'h':3600,'d':3600 * 24}
+    seconds = 0
+    for unit,times in tmap.items():
+        if time.endswith(unit):
+            value = int(time[:-1])
+            seconds = value * times   
+            break
+
+    return seconds
+
+def purge(path='.', age='3d', filename_filter=None):
+    """ Purge files older than certain age
+    
+    Params:
+    path:    parent path to purge files
+    age:    e.g. '2h', support d-day, h-hour, m-minute, s-second
+    filename_filter:  glob format, e.g. debug.log* 
+    
+    Usage examples:
+    purge('/root/tmp/', '24h', 'debug.log*')
+
+    Note: Purge files only, not subfolders
+    """
+    import os
+    import time
+    from glob import glob
+
+    now = time.time()
+    if filename_filter is None:
+        fullpath = os.path.join(path,'*')
+    else:
+        fullpath = os.path.join(path,filename_filter)
+
+    for f in glob(fullpath):
+        if os.path.isfile(f) and os.stat(f).st_mtime < now - time2seconds(age):
+            os.remove(f)
+    
+def test_self():
+    purge('/root/tmp/','10s','*.txt')
 
 
 if __name__ == "__main__":
