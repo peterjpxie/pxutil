@@ -156,14 +156,9 @@ def time2seconds(time):
     Note: Month and year duration varies. Not worth doing for the sake of simplicity.
     """
     tmap = {'s':1,'m':60,'h':3600,'d':3600 * 24}
-    seconds = 0
-    for unit,times in tmap.items():
-        if time.endswith(unit):
-            value = int(time[:-1])
-            seconds = value * times   
-            break
-
-    return seconds
+    unit = time[-1]
+    value = int(time[:-1])
+    return value * tmap[unit]
 
 def purge(path='.', age='3d', filename_filter=None):
     """ Purge files older than certain age
@@ -193,7 +188,7 @@ def purge(path='.', age='3d', filename_filter=None):
             os.remove(f)
     
 def test_self():
-    purge('/root/tmp/','10s','*.txt')
+    print(time2seconds('1m'))
 
 
 if __name__ == "__main__":
