@@ -184,7 +184,8 @@ def purge(path='.', age='3d', filename_filter=None):
         fullpath = os.path.join(path,filename_filter)
 
     for f in glob(fullpath):
-        if os.path.isfile(f) and os.stat(f).st_mtime < now - time2seconds(age):
+        # use ctime instead of mtime. e.g. youtube-dl downloads a old video from youtube, mtime is retained, but ctime is when it is downloaded.
+        if os.path.isfile(f) and os.stat(f).st_ctime < now - time2seconds(age):
             os.remove(f)
     
 def test_self():
