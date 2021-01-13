@@ -11,12 +11,13 @@ import locale
 if sys.version_info < (3, 5):
     raise Exception("Require python 3.5 or above.")
 
-logging.basicConfig(
-    level=logging.WARNING,
-    format="%(asctime)s ln-%(lineno)-3d %(levelname)7s: %(message)s",
-    datefmt="%Y-%m-%d %I:%M:%S",
-)
-log = logging.getLogger("pxutil")
+# util should not configure logging.basicConfig because it will change the logging of the python files which import this util.
+# logging.basicConfig(
+#     level=logging.WARNING,
+#     format='%(asctime)s [%(lineno)-4d] [%(levelname)7s]: %(message)s',
+#     datefmt="%Y-%m-%d %I:%M:%S",
+# )
+# log = logging.getLogger("pxutil")
 
 
 def bash(cmd):
@@ -117,7 +118,7 @@ def grep(pattern, string=None, filename=None):
     If the matched list is too big, you can modify it to use yield generator.
     """
     if string == None and filename == None:
-        log.error('grep: No string nor filename provided in the arguments.')
+        print('grep: No string nor filename provided in the arguments.')
         return []
     if string != None:
         extended_pattern = ".*" + pattern + ".*"
