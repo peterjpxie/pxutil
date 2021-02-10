@@ -164,8 +164,9 @@ def time2seconds(time):
 def purge(path='.', age='3d', filename_filter=None):
     """ Purge files older than certain age
     
-    Params:
-    path:    parent path to purge files
+    Params
+    ------
+    path:   parent path to purge files
     age:    e.g. '2h', support d-day, h-hour, m-minute, s-second
     filename_filter:  glob format, e.g. debug.log* 
     
@@ -178,6 +179,10 @@ def purge(path='.', age='3d', filename_filter=None):
     import time
     from glob import glob
 
+    if not os.path.isdir(path):
+        print("%s is not a valid path." % path)
+        return 1
+
     now = time.time()
     if filename_filter is None:
         fullpath = os.path.join(path,'*')
@@ -188,7 +193,35 @@ def purge(path='.', age='3d', filename_filter=None):
         # use ctime instead of mtime. e.g. youtube-dl downloads a old video from youtube, mtime is retained, but ctime is when it is downloaded.
         if os.path.isfile(f) and os.stat(f).st_ctime < now - time2seconds(age):
             os.remove(f)
+
+# TODO: Combine purge and purge_dir functions
+def purge_dir(dir, glob_pattern='*'):
+    """ Purge all files and sub-folders in a folder
+
+    glob_pattern samples:
+    * : match all files and sub-folders
+    *.txt : match all .txt files
+
+    Note: It retains the folder dir. Use shutil.rmtree if you want to remove the folder as well. 
+    """
+    import os
+    import shutil
+    from glob import glob
     
+    if not os.path.isdir(dir):
+        print("%s is not a valid directory." % dir)
+        return 1
+
+    glob_path = os.path.join(dir, glob_pattern)
+    for f in glob(glob_path):        
+        if os.path.isfile(f) or os.path.islink(f):
+            try:
+                os.remove(f)
+            except OSError as e:
+                print('Failed to remove %s. Reason: %s' % (f, e))
+        elif os.path.isdir(f):
+            shutil.rmtree(f,ignore_errors=True)
+
 def test_self():
     print(time2seconds('1m'))
 
