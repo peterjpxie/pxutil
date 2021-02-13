@@ -161,69 +161,47 @@ def time2seconds(time):
     value = int(time[:-1])
     return value * tmap[unit]
 
-def purge(path='.', age='3d', filename_filter=None):
-    """ Purge files older than certain age
+def purge(dir, age='0s', filename_filter='*'):
+    """ Purge files and subfolders older than certain age
     
     Params
     ------
-    path:   parent path to purge files
+    dir:   directory to purge files and subfolders
     age:    e.g. '2h', support d-day, h-hour, m-minute, s-second
     filename_filter:  glob format, e.g. debug.log* 
     
     Usage examples:
     purge('/root/tmp/', '24h', 'debug.log*')
 
-    Note: Purge files only, not subfolders
+    Note: It retains the parent folder dir. Use shutil.rmtree if you want to remove the folder as well. 
     """
     import os
     import time
     from glob import glob
-
-    if not os.path.isdir(path):
-        print("%s is not a valid path." % path)
-        return 1
-
-    now = time.time()
-    if filename_filter is None:
-        fullpath = os.path.join(path,'*')
-    else:
-        fullpath = os.path.join(path,filename_filter)
-
-    for f in glob(fullpath):
-        # use ctime instead of mtime. e.g. youtube-dl downloads a old video from youtube, mtime is retained, but ctime is when it is downloaded.
-        if os.path.isfile(f) and os.stat(f).st_ctime < now - time2seconds(age):
-            os.remove(f)
-
-# TODO: Combine purge and purge_dir functions
-def purge_dir(dir, glob_pattern='*'):
-    """ Purge all files and sub-folders in a folder
-
-    glob_pattern samples:
-    * : match all files and sub-folders
-    *.txt : match all .txt files
-
-    Note: It retains the folder dir. Use shutil.rmtree if you want to remove the folder as well. 
-    """
-    import os
     import shutil
-    from glob import glob
-    
+
     if not os.path.isdir(dir):
         print("%s is not a valid directory." % dir)
         return 1
 
-    glob_path = os.path.join(dir, glob_pattern)
-    for f in glob(glob_path):        
-        if os.path.isfile(f) or os.path.islink(f):
-            try:
-                os.remove(f)
-            except OSError as e:
-                print('Failed to remove %s. Reason: %s' % (f, e))
-        elif os.path.isdir(f):
-            shutil.rmtree(f,ignore_errors=True)
+    now = time.time()
+    fullpath = os.path.join(dir,filename_filter)
+
+    for f in glob(fullpath):
+        # use ctime instead of mtime. e.g. youtube-dl downloads a old video from youtube, mtime is retained, but ctime is when it is downloaded.
+        if os.stat(f).st_ctime <= now - time2seconds(age):
+            # os.remove(f)
+            if os.path.isfile(f) or os.path.islink(f):
+                try:
+                    os.remove(f)
+                except OSError as e:
+                    print('Failed to remove %s. Reason: %s' % (f, e))
+            elif os.path.isdir(f):
+                shutil.rmtree(f,ignore_errors=True)        
 
 def test_self():
-    print(time2seconds('1m'))
+    purge('/root/tmp')
+    
 
 
 if __name__ == "__main__":
