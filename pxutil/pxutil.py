@@ -156,6 +156,7 @@ def time2seconds(time):
 
     Note: Month and year duration varies. Not worth doing for the sake of simplicity.
     """
+    assert len(re.findall('^\d+[s|m|h|d]$', str(time))) == 1, 'Invalid time string format.'
     tmap = {'s':1,'m':60,'h':3600,'d':3600 * 24}
     unit = time[-1]
     value = int(time[:-1])
