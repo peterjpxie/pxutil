@@ -32,14 +32,22 @@ def test_trim_docstring():
     assert ret == "ab\n    cd"
 
 def test_replace_in_file():
-    """
-    TODO
-    """
-    pass 
+    import os
+
+    tempfile = 'test_replace_in_file.tmp'
+    with open(tempfile,mode='w+') as f:
+        f.write('Hello world\nHello you.')
+
+    px.replace_in_file(tempfile,'Hello','Hi',backup=None)
+    with open(tempfile,mode='r') as f:
+        assert f.read() == 'Hi world\nHi you.'
+
+    os.remove(tempfile)
+
     # import tempfile   
     # # tempfile is removed on close. Need a persistent temp file for this test
     # with tempfile.TemporaryFile(mode='w+') as f:
-    #     f.write(b'Hello world!\Hello you.')
+    #     f.write('Hello world!\nHello you.')
     #     f.seek(0)
     #     print(f.read())
     
