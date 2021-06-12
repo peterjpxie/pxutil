@@ -7,6 +7,7 @@ import sys
 import logging
 import re
 import locale
+import pdb
 
 if sys.version_info < (3, 5):
     raise Exception("Require python 3.5 or above.")
@@ -20,22 +21,22 @@ if sys.version_info < (3, 5):
 # log = logging.getLogger("pxutil")
 
 
-def bash(cmd):
+def bash(cmd, encoding=None):
     """    
     subprocess.run with intuitive options to execute system commands just like shell bash command.
     
     Inspired by https://pypi.org/project/bash/.
     
-    cmd: string or list 
-    return: CompletedProcess object in text (decode as utf-8), with attributes stdout, stderr and returncode.
+    cmd: string 
+    return: CompletedProcess object in text (decode as locale encoding), with attributes stdout, stderr and returncode.
     
     Usage example: 
     ret = bash('ls')
     print(ret.stdout, ret.stderr, ret.returncode)
     
-    Warning of using shell=True: https://docs.python.org/2/library/subprocess.html#frequently-used-arguments
+    Warning of using shell=True: https://docs.python.org/3/library/subprocess.html#security-considerations
     """
-    from subprocess import run, PIPE  # , Popen, CompletedProcess
+    from subprocess import run, PIPE  # Popen, CompletedProcess
     import sys
     import locale
 
@@ -43,11 +44,16 @@ def bash(cmd):
         3,
         7,
     ):  # version_info is actually a tuple, so compare with a tuple
-        return run(cmd, shell=True, capture_output=True, text=True)
+        if encoding:
+            return run(cmd, shell=True, capture_output=True, text=True, encoding=encoding)
+        else:
+            return run(cmd, shell=True, capture_output=True, text=True)
 
-    elif sys.version_info >= (3, 5):        
-        # get system default locale encoding
-        encoding=locale.getdefaultlocale()[1] 
+    elif sys.version_info >= (3, 5):
+        if encoding is None:        
+            # get system default locale encoding
+            encoding=locale.getdefaultlocale()[1] 
+        print('encoding: %s' % encoding)
         r = run(cmd, shell=True, stdout=PIPE, stderr=PIPE)
         r.stdout = r.stdout.decode(encoding)
         r.stderr = r.stderr.decode(encoding)
@@ -60,6 +66,35 @@ def bash(cmd):
         stdout, stderr = p.communicate()
         code = p.returncode
         """
+
+def shx(cmd):
+    """    
+    run system cmd like sh -x
+    
+    Print the cmd with + prefix before executing
+    Don't capture the output or error 
+    
+    cmd: string 
+    return: CompletedProcess object in text (decode as locale encoding) with only returncode.
+    
+    Usage example: 
+    ret = shx('ls')
+    print(ret.returncode)
+    
+    Warning of using shell=True: https://docs.python.org/3/library/subprocess.html#security-considerations
+    """
+    from subprocess import run # CompletedProcess
+    import sys
+    import locale
+
+    if sys.version_info >= (
+        3,
+        5,
+    ):  # version_info is actually a tuple, so compare with a tuple
+        print('+ %s' % cmd)
+        return run(cmd, shell=True)
+    else:
+        raise Exception("Require python 3.5 or above.")
 
 def trim_docstring(docstring):
     """
@@ -156,7 +191,7 @@ def time2seconds(time):
 
     Note: Month and year duration varies. Not worth doing for the sake of simplicity.
     """
-    assert len(re.findall('^\d+[s|m|h|d]$', str(time))) == 1, 'Invalid time string format.'
+    assert len(re.findall(r'^\d+[s|m|h|d]$', str(time))) == 1, 'Invalid time string format.'
     tmap = {'s':1,'m':60,'h':3600,'d':3600 * 24}
     unit = time[-1]
     value = int(time[:-1])
@@ -201,9 +236,10 @@ def purge(dir, age='0s', filename_filter='*'):
                 shutil.rmtree(f,ignore_errors=True)        
 
 def test_self():
-    purge('/root/tmp')
+    ret = time2seconds('2m')
+    print(ret)
+    # pdb.set_trace()
     
-
-
 if __name__ == "__main__":
+    print('Test self')
     test_self()
