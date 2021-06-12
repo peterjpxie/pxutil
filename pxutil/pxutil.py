@@ -67,7 +67,7 @@ def bash(cmd, encoding=None):
         code = p.returncode
         """
 
-def shx(cmd):
+def bashx(cmd):
     """    
     run system cmd like sh -x
     
@@ -166,18 +166,19 @@ def grep(pattern, string=None, filename=None):
                 result += re.findall(extended_pattern, l)
         return result
 
-def replace_in_file(filename, old, new, backup=None):
+def replace_in_file(files, old, new, backup=None):
     """
     Replace in place directly on a file.
     
     Arguments:
-        old - old string to replace
-        new - new string 
-        backup - backup file suffix, e.g. '.bak'. None means no backup
+    files - single or list of files, e.g. 'a.txt' or ['a.txt',]
+    old - old string to replace
+    new - new string
+    backup - backup file suffix, e.g. '.bak'. None means no backup
     """
     import fileinput
 
-    with fileinput.FileInput(filename, inplace=True, backup=backup) as file:
+    with fileinput.FileInput(files, inplace=True, backup=backup) as file:
         for line in file:
             # yes, this print will write into the file instead to stdout.
             # end = '' so it does not print another blank new line.

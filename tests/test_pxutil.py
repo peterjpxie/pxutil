@@ -11,15 +11,15 @@ import pxutil as px
 
 def test_bash():
     ret = px.bash("ls")
-    # print(ret)
     assert ret.returncode == 0
 
+def test_bashx():
+    ret = px.bashx("ls")
+    assert ret.returncode == 0
 
 def test_grep():
     ret = px.grep("de", "abc\ndef")
-    # print(ret)
     assert ret == ["def"]
-
 
 def test_trim_docstring():
     ret = px.trim_docstring(
@@ -36,9 +36,11 @@ def test_replace_in_file():
     TODO
     """
     pass 
-    # import tempfile
-    # 
-    # # tempfile supports only bytes format
-    # with tempfile.TemporaryFile() as f:
+    # import tempfile   
+    # # tempfile is removed on close. Need a persistent temp file for this test
+    # with tempfile.TemporaryFile(mode='w+') as f:
     #     f.write(b'Hello world!\Hello you.')
+    #     f.seek(0)
+    #     print(f.read())
+    
     
