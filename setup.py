@@ -8,7 +8,7 @@ with open("README.rst") as readme:
 
 setup(
     name="pxutil",
-    version="0.0.7",
+    version="0.0.8",
     description="Some handy Python utilities",
     long_description=long_description,
     # long_description_content_type="text/markdown", # default is rst

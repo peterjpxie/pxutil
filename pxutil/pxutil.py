@@ -53,7 +53,7 @@ def bash(cmd, encoding=None):
         if encoding is None:        
             # get system default locale encoding
             encoding=locale.getdefaultlocale()[1] 
-        print('encoding: %s' % encoding)
+        # print('encoding: %s' % encoding)
         r = run(cmd, shell=True, stdout=PIPE, stderr=PIPE)
         r.stdout = r.stdout.decode(encoding)
         r.stderr = r.stderr.decode(encoding)
@@ -75,7 +75,7 @@ def bashx(cmd):
     Don't capture the output or error 
     
     cmd: string 
-    return: CompletedProcess object in text (decode as locale encoding) with only returncode.
+    return: CompletedProcess object with only returncode.
     
     Usage example: 
     ret = shx('ls')
