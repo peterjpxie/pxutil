@@ -8,7 +8,7 @@ with open("README.rst") as readme:
 
 setup(
     name="pxutil",
-    version="0.0.8",
+    version="0.0.9",
     description="Some handy Python utilities",
     long_description=long_description,
     # long_description_content_type="text/markdown", # default is rst
@@ -29,6 +29,7 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9"      
         "Topic :: Software Development :: Libraries",
     ],
 )

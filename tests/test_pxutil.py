@@ -10,11 +10,26 @@ import pxutil as px
 
 
 def test_bash():
-    ret = px.bash("ls")
+    ret = px.bash("pwd")
     assert ret.returncode == 0
 
 def test_bashx():
-    ret = px.bashx("ls")
+    cmd = 'pwd'
+    ret = px.bashx(cmd)
+    assert ret.returncode == 0
+    
+    # test x=False
+    import io
+    import sys
+
+    capturedOutput = io.StringIO()   # Create StringIO object
+    sys.stdout = capturedOutput      # and redirect stdout.
+
+    ret = px.bashx(cmd, x=False)   # capture stdout of print
+    standard_output = capturedOutput.getvalue()
+    
+    sys.stdout = sys.__stdout__      # Reset redirect.
+    assert ('+ %s' % cmd) not in standard_output
     assert ret.returncode == 0
 
 def test_grep():

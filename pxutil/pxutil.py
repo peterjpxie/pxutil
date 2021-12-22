@@ -67,7 +67,7 @@ def bash(cmd, encoding=None):
         code = p.returncode
         """
 
-def bashx(cmd):
+def bashx(cmd, x=True):
     """    
     run system cmd like sh -x
     
@@ -85,13 +85,13 @@ def bashx(cmd):
     """
     from subprocess import run # CompletedProcess
     import sys
-    import locale
 
     if sys.version_info >= (
         3,
         5,
     ):  # version_info is actually a tuple, so compare with a tuple
-        print('+ %s' % cmd)
+        if x:
+            print('+ %s' % cmd)
         return run(cmd, shell=True)
     else:
         raise Exception("Require python 3.5 or above.")
