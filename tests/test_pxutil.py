@@ -7,7 +7,7 @@ For pytest to support importing local modules, must create a __init__.py file to
 # Somehow direct import works with magic with pytest, even without tox or install pxutil as a system package.
 # Not sure how it works exactly, rename __init__.py and setup.py from parent folder but it still works.
 import pxutil as px
-
+import pytest
 
 def test_bash():
     ret = px.bash("pwd")
@@ -18,7 +18,7 @@ def test_bashx():
     ret = px.bashx(cmd)
     assert ret.returncode == 0
     
-    # test x=False
+    ## test x=False
     import io
     import sys
 
@@ -31,6 +31,15 @@ def test_bashx():
     sys.stdout = sys.__stdout__      # Reset redirect.
     assert ('+ %s' % cmd) not in standard_output
     assert ret.returncode == 0
+
+    ## test e=True
+    # Ref: https://docs.pytest.org/en/6.2.x/assert.html#assertions-about-expected-exceptions
+    cmd = 'ls not_exit'
+    # Capture SystemExit exception raised by sys.exit
+    with pytest.raises(SystemExit) as excinfo:
+        px.bashx(cmd, e=True)
+
+    assert excinfo.type == SystemExit
 
 def test_grep():
     ret = px.grep("de", "abc\ndef")

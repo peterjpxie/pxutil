@@ -67,14 +67,19 @@ def bash(cmd, encoding=None):
         code = p.returncode
         """
 
-def bashx(cmd, x=True):
+def bashx(cmd, x=True, e=False):
     """    
-    run system cmd like sh -x
+    run system cmd like bash -x
     
     Print the cmd with + prefix before executing
     Don't capture the output or error 
     
-    cmd: string 
+    Arguments
+    ---------
+    cmd: string - command to run
+    x: When True, print the command with prefix + like shell 'bash -x' before running it 
+    e: When True, exit the python program when returncode is not 0, like shell 'bash -e'.
+    
     return: CompletedProcess object with only returncode.
     
     Usage example: 
@@ -92,7 +97,13 @@ def bashx(cmd, x=True):
     ):  # version_info is actually a tuple, so compare with a tuple
         if x:
             print('+ %s' % cmd)
-        return run(cmd, shell=True)
+
+        ret=run(cmd, shell=True)
+        
+        if e and ret.returncode !=0:
+            sys.exit(1)
+        else:
+            return ret
     else:
         raise Exception("Require python 3.5 or above.")
 
