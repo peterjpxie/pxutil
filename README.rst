@@ -32,6 +32,8 @@ Usage
 
     px.bash('ls')
 
+    px.bashx('ls')
+
     px.grep('ab','abc\ndef')
 
     px.trim_docstring('''
