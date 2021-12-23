@@ -101,6 +101,7 @@ def bashx(cmd, x=True, e=False):
         ret=run(cmd, shell=True)
         
         if e and ret.returncode !=0:
+            print('Error: Command returns error code %s. Exiting the program...' % ret.returncode)
             sys.exit(1)
         else:
             return ret
