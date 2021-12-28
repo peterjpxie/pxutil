@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from setuptools import find_packages, setup
 
@@ -8,8 +8,8 @@ with open("README.rst") as readme:
 
 setup(
     name="pxutil",
-    version="0.0.10",
-    description="Some handy Python utilities",
+    version="0.0.11",
+    description="Some handy Python tools",
     long_description=long_description,
     # long_description_content_type="text/markdown", # default is rst
     author="Peter Jiping Xie",
@@ -18,6 +18,9 @@ setup(
     license="MIT",
     packages=find_packages(),
     python_requires='>=3.5',
+    entry_points = {
+        'console_scripts': ['bashx=pxutil.cli:bashx_main'],
+    },
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",

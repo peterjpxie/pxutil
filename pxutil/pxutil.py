@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Some handy utilities from Peter Jiping Xie  
 """
