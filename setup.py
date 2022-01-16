@@ -25,7 +25,7 @@ setup(
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: MacOS",
+        # "Operating System :: MacOS", # Should work but not tested, better remove.
         "Operating System :: POSIX",
         "Operating System :: Microsoft :: Windows",
         "Programming Language :: Python :: 3.5",
