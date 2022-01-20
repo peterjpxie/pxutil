@@ -14,14 +14,16 @@ def test_bash():
     assert ret.returncode == 0
 
 def test_bashx():
+    import os
+    import io
+    import sys    
+    
+    ## test default
     cmd = 'pwd'
     ret = px.bashx(cmd)
     assert ret.returncode == 0
     
     ## test x=False
-    import io
-    import sys
-
     capturedOutput = io.StringIO()   # Create StringIO object
     sys.stdout = capturedOutput      # and redirect stdout.
 
@@ -32,14 +34,33 @@ def test_bashx():
     assert ('+ %s' % cmd) not in standard_output
     assert ret.returncode == 0
 
+    ## test x=False by environment variable BASH_CMD_PRINT
+    os.environ['BASH_CMD_PRINT'] = 'False'
+    capturedOutput = io.StringIO()   # Create StringIO object
+    sys.stdout = capturedOutput      # and redirect stdout.
+
+    ret = px.bashx(cmd, x=True)   # capture stdout of print
+    standard_output = capturedOutput.getvalue()
+    
+    sys.stdout = sys.__stdout__      # Reset redirect.
+    assert ('+ %s' % cmd) not in standard_output
+    assert ret.returncode == 0    
+
     ## test e=True
     # Ref: https://docs.pytest.org/en/6.2.x/assert.html#assertions-about-expected-exceptions
     cmd = 'ls not_exit'
     # Capture SystemExit exception raised by sys.exit
     with pytest.raises(SystemExit) as excinfo:
         px.bashx(cmd, e=True)
-
     assert excinfo.type == SystemExit
+
+    ## test e=True by environment variable BASH_EXIT_ON_ERROR
+    os.environ['BASH_EXIT_ON_ERROR'] = 'true'
+    cmd = 'ls not_exit'
+    # Capture SystemExit exception raised by sys.exit
+    with pytest.raises(SystemExit) as excinfo:
+        px.bashx(cmd, e=False)
+    assert excinfo.type == SystemExit    
 
 def test_grep():
     ret = px.grep("de", "abc\ndef")

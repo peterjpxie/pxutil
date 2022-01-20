@@ -5,9 +5,7 @@ Some handy utilities from Peter Jiping Xie
 # __all__ = ['bash','trim_docstring','grep']
 
 import sys
-import logging
 import re
-import locale
 import pdb
 
 if sys.version_info < (3, 5):
@@ -78,11 +76,19 @@ def bashx(cmd, x=True, e=False):
     Arguments
     ---------
     cmd: string - command to run
-    x: When True, print the command with prefix + like shell 'bash -x' before running it 
-    e: When True, exit the python program when returncode is not 0, like shell 'bash -e'.
+    x:  When True, print the command with prefix + like shell 'bash -x' before running it 
+    e:  When True, exit the python program when returncode is not 0, like shell 'bash -e'.
     
-    return: CompletedProcess object with only returncode.
+    return
+    ------
+    CompletedProcess object with only returncode.
     
+    Shell environment variables
+    ---------------------------
+    You can set the following environment variables which have the same effect of but overwrite argument options.
+    BASH_CMD_PRINT=True     same as x=True    
+    BASH_EXIT_ON_ERROR=True same as e=True
+
     Usage example: 
     ret = shx('ls')
     print(ret.returncode)
@@ -91,11 +97,28 @@ def bashx(cmd, x=True, e=False):
     """
     from subprocess import run # CompletedProcess
     import sys
+    import os
 
     if sys.version_info >= (
         3,
         5,
     ):  # version_info is actually a tuple, so compare with a tuple
+        x_env = os.getenv('BASH_CMD_PRINT', None)
+        # BASH_CMD_PRINT overwrites x argument
+        if x_env is not None:
+            if x_env.lower() == 'true':
+                x = True
+            elif x_env.lower() == 'false':
+                x = False
+
+        e_env = os.getenv('BASH_EXIT_ON_ERROR', None)
+        # BASH_EXIT_ON_ERROR overwrites x argument
+        if e_env is not None:
+            if e_env.lower() == 'true':
+                e = True
+            elif e_env.lower() == 'false':
+                e = False
+
         if x:
             print('+ %s' % cmd)
 
