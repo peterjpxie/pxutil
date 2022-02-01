@@ -18,7 +18,6 @@ setup(
     url="https://github.com/peterjpxie/pxutil.git",
     license="MIT",
     packages=find_packages(), 
-    package_data={'': ['pxutil/*.so', 'pxutil/*.dll','pxutil/*.dylib']}, # shared lib from Cython
     python_requires='>=3.6',
     entry_points = {
         'console_scripts': ['bashx=pxutil.cli:bashx_main'],
@@ -38,6 +37,8 @@ setup(
         "Topic :: Software Development :: Libraries",
     ],
     # build cython modules 
-    ext_modules=cythonize("pxutil/*.pyx", language_level = "3"),
+    ext_modules=cythonize("pxutil/*.pyx", language_level="3"),
     zip_safe=False,   
+    # shared lib from Cython - No need! setup.py build and include them in wheel automatically.
+    # package_data={'': ['pxutil/*.so', 'pxutil/*.dll','pxutil/*.dylib']}, 
 )
