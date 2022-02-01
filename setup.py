@@ -8,7 +8,7 @@ with open("README.rst") as readme:
 
 setup(
     name="pxutil",
-    version="0.0.12",
+    version="0.0.13",
     description="Some handy Python tools",
     long_description=long_description,
     # long_description_content_type="text/markdown", # default is rst
@@ -25,10 +25,9 @@ setup(
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
-        # "Operating System :: MacOS", # Should work but not tested, better remove.
+        "Operating System :: MacOS", # Should work but not fully tested
         "Operating System :: POSIX",
         "Operating System :: Microsoft :: Windows",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
