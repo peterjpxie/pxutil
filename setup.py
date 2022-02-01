@@ -5,7 +5,7 @@ from Cython.Build import cythonize
 
 with open("README.rst") as readme:
     long_description = readme.read()
-    print(long_description)
+    # print(long_description)
 
 setup(
     name="pxutil",
@@ -18,6 +18,7 @@ setup(
     url="https://github.com/peterjpxie/pxutil.git",
     license="MIT",
     packages=find_packages(), 
+    package_data={'': ['pxutil/*.so', 'pxutil/*.dll','pxutil/*.dylib']}, # shared lib from Cython
     python_requires='>=3.6',
     entry_points = {
         'console_scripts': ['bashx=pxutil.cli:bashx_main'],
