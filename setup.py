@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from setuptools import find_packages, setup
+from Cython.Build import cythonize
 
 with open("README.rst") as readme:
     long_description = readme.read()
@@ -16,8 +17,8 @@ setup(
     author_email="peter.jp.xie@gmail.com",
     url="https://github.com/peterjpxie/pxutil.git",
     license="MIT",
-    packages=find_packages(),
-    python_requires='>=3.5',
+    packages=find_packages(), 
+    python_requires='>=3.6',
     entry_points = {
         'console_scripts': ['bashx=pxutil.cli:bashx_main'],
     },
@@ -35,4 +36,7 @@ setup(
         "Programming Language :: Python :: 3.10",        
         "Topic :: Software Development :: Libraries",
     ],
+    # build cython modules 
+    ext_modules=cythonize("pxutil/*.pyx", language_level = "3"),
+    zip_safe=False,   
 )
