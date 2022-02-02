@@ -3,4 +3,10 @@ requires = ["setuptools", "wheel", "Cython"]
 build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
-# before-all = "apt install libpng-dev"
+# This is not required by pxutil and actually causing errors in CI
+# before-all = "apt install libpng-dev" 
+
+# Run the package tests using `pytest`
+test-command = [
+    "pytest -v --cov=pxutil tests",
+]

@@ -49,5 +49,5 @@ setup(
     # ext_modules=cythonize(extensions),
     zip_safe=False,   
     # shared lib from Cython - No need! setup.py build and include them in wheel automatically.
-    # package_data={'': ['pxutil/*.so', 'pxutil/*.dll','pxutil/*.dylib']}, 
+    # package_data={'': ['pxutil/*.so', 'pxutil/*.dll', 'pxutil/*.pyd']}, 
 )
