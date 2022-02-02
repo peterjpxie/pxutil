@@ -3,4 +3,4 @@ requires = ["setuptools", "wheel", "Cython"]
 build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
-before-all = "apt install libpng-dev"
+# before-all = "apt install libpng-dev"
