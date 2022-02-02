@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from setuptools import find_packages, setup
+from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
 with open("README.rst") as readme:
     long_description = readme.read()
     # print(long_description)
+
+extensions = [
+    Extension("*", ["*/*.pyx"],
+        # include_dirs=[...],
+        # libraries=[...],
+        # library_dirs=[...]
+        ),
+]
 
 setup(
     name="pxutil",
@@ -36,8 +44,9 @@ setup(
         "Programming Language :: Python :: 3.10",        
         "Topic :: Software Development :: Libraries",
     ],
-    # build cython modules 
-    ext_modules=cythonize("pxutil/*.pyx", language_level="3"),
+    # build cython modules    
+    ext_modules=cythonize("*/*.pyx"), # language_level="3"
+    # ext_modules=cythonize(extensions),
     zip_safe=False,   
     # shared lib from Cython - No need! setup.py build and include them in wheel automatically.
     # package_data={'': ['pxutil/*.so', 'pxutil/*.dll','pxutil/*.dylib']}, 
