@@ -10,5 +10,5 @@ test-requires = ["pytest", "pytest-cov"]
 
 # Run the package tests using `pytest`
 test-command = [
-    "pytest -v --cov=pxutil tests",
+    "pytest -v --cov={project}/pxutil {project}/tests",
 ]
