@@ -7,4 +7,5 @@
 
 rm -rf build/* dist/* pxutil/*.so pxutil.egg-info
 python setup.py sdist bdist_wheel # build wheel including build_ext
-ls -l dist/*
+# cibuildwheel --platform linux # cross platform build --output-dir dist
+ls -l dist/* 
