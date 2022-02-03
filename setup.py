@@ -7,13 +7,13 @@ with open("README.rst") as readme:
     long_description = readme.read()
     # print(long_description)
 
-extensions = [
-    Extension("*", ["*/*.pyx"],
-        # include_dirs=[...],
-        # libraries=[...],
-        # library_dirs=[...]
-        ),
-]
+# extensions = [
+#     Extension("*", ["*/*.pyx"],
+#         # include_dirs=[...],
+#         # libraries=[...],
+#         # library_dirs=[...]
+#         ),
+# ]
 
 setup(
     name="pxutil",
