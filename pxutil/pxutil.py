@@ -9,7 +9,7 @@ import re
 import pdb
 
 if sys.version_info < (3, 5):
-    raise Exception("Require python 3.5 or above.")
+    raise SystemError("Require python 3.5 or above.")
 
 # util should not configure logging.basicConfig because it will change the logging of the python files which import this util.
 # logging.basicConfig(
