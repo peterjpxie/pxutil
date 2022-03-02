@@ -83,9 +83,15 @@ def test_replace_in_file():
     with open(tempfile,mode='w+') as f:
         f.write('Hello world\nHello you.')
 
+    # test 1 file
     px.replace_in_file(tempfile,'Hello','Hi',backup=None)
     with open(tempfile,mode='r') as f:
         assert f.read() == 'Hi world\nHi you.'
+
+    # test file list
+    px.replace_in_file([tempfile,],'Hi','Hey',backup=None)
+    with open(tempfile,mode='r') as f:
+        assert f.read() == 'Hey world\nHey you.'
 
     os.remove(tempfile)
 
