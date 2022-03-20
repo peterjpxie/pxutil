@@ -9,22 +9,23 @@ Some handy Python utilities
 
 Install from source
 ===================
+::
 
-python setup.py install
+    python setup.py install
+    or 
+    pip install .
 
-or 
+Build distributions -- Replaced with Actions / cibuildwheel
+===========================================================
+::
 
-pip install .
-
-Build distributions (source and binary wheel)
-=============================================
-
-rm -rf dist/* && python setup.py sdist bdist_wheel
+    rm -rf dist/* && python setup.py sdist bdist_wheel
 
 Publish to pypi
 ===============
+::
 
-twine upload dist/*
+    twine upload dist/*
 
 Usage
 =====
