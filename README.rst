@@ -1,7 +1,9 @@
 pxutil
 ======
-.. image:: https://travis-ci.com/peterjpxie/pxutil.svg?branch=master
-    :target: https://travis-ci.com/peterjpxie/pxutil
+.. image:: https://github.com/peterjpxie/pxutil/actions/workflows/build_test_publish.yml/badge.svg
+    :target: https://github.com/peterjpxie/pxutil/actions  
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
 
 Some handy Python utilities
 
