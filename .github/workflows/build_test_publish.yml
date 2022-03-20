@@ -1,4 +1,4 @@
-name: Build
+name: Build, Test and Publish
 
 # on: [push, pull_request]
 # Alternatively, to publish when a (published) GitHub Release is created, use the following:
