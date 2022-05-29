@@ -10,7 +10,7 @@ on:
       - published
 
 jobs:
-  build_wheels:
+  build_test_wheels:
     name: Build wheels and test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
