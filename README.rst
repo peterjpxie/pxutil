@@ -31,7 +31,7 @@ Publish to pypi ( Replaced with Actions / cibuildwheel )
 
 Actions
 ===============
-The github action workflow has been configured to run build, test, publish to pypi.
+The github action workflow has been configured to run build, test and publish to pypi.
 
 The workflow is configured to run manually, not to waste resources on each commit, or automatically when a release is created.
 
