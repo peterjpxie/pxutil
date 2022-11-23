@@ -15,17 +15,28 @@ Install from source
     or 
     pip install .
 
-Build distributions -- Replaced with Actions / cibuildwheel
+Build distributions ( Replaced with Actions / cibuildwheel )
 ===========================================================
 ::
 
     rm -rf dist/* && python setup.py sdist bdist_wheel
 
-Publish to pypi
+
+Publish to pypi ( Replaced with Actions / cibuildwheel )
 ===============
 ::
 
     twine upload dist/*
+
+
+Actions
+===============
+The github action workflow has been configured to run build, test, publish to pypi.
+
+The workflow is configured to run manually, not to waste resources on each commit, or automatically when a release is created.
+
+The publish job is executed only when a release is created.
+
 
 Usage
 =====
