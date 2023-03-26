@@ -6,7 +6,6 @@ Some handy utilities from Peter Jiping Xie
 
 import sys
 import re
-import pdb
 
 if sys.version_info < (3, 5):
     raise SystemError("Require python 3.5 or above.")
