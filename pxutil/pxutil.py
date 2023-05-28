@@ -58,12 +58,6 @@ def bash(cmd, encoding=None):
         return r
     else:
         raise Exception("Require python 3.5 or above.")
-        # Alternately can call Popen directly, but it will return stderr, stdout as bytes and need to decode first. Don't bother, just upgrade Python version.
-        """ Example
-        p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
-        stdout, stderr = p.communicate()
-        code = p.returncode
-        """
 
 def bashx(cmd, x=True, e=False):
     """    
