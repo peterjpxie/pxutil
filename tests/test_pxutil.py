@@ -7,6 +7,7 @@ For pytest to support importing local modules, must create a __init__.py file to
 # Somehow direct import works with magic with pytest, even without tox or install pxutil as a system package.
 # Not sure how it works exactly, rename __init__.py and setup.py from parent folder but it still works.
 import pxutil as px
+from pxutil import exit_on_exception
 import pytest
 
 def test_bash():
@@ -101,5 +102,4 @@ def test_replace_in_file():
     #     f.write('Hello world!\nHello you.')
     #     f.seek(0)
     #     print(f.read())
-    
     

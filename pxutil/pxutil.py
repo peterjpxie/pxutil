@@ -265,11 +265,31 @@ def purge(dir, age='0s', filename_filter='*'):
             elif os.path.isdir(f):
                 shutil.rmtree(f,ignore_errors=True)        
 
-def test_self():
-    ret = time2seconds('2m')
-    print(ret)
+
+def exit_on_exception(func):
+    """Decorator to exit if func returns an exception(error)"""
+    def wrapper(*args, **kwargs):
+        ret=func(*args,**kwargs)        
+        if isinstance(ret,Exception):
+            print(f'[Error] Program exits because {func.__name__}() failed with error:\n{ret}')            
+            sys.exit(1)
+        return ret
+    return wrapper
+
+
+@exit_on_exception
+def test_exit_on_exception(aa=None):
+    print('test')
+    if aa:
+        return Exception('sample error')
+
+def main():
+    """ main function for self test """
+    # ret = time2seconds('2m')
+    # print(ret)
     # pdb.set_trace()
+    test_exit_on_exception(1)
+    print('End of main()')
     
 if __name__ == "__main__":
-    print('Test self')
-    test_self()
+    main()
