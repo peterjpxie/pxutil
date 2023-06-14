@@ -3,6 +3,8 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
+_version = "0.0.15"
+
 with open("README.rst") as readme:
     long_description = readme.read()
     # print(long_description)
@@ -17,7 +19,7 @@ with open("README.rst") as readme:
 
 setup(
     name="pxutil",
-    version="0.0.14",
+    version=_version,
     description="Some handy Python tools",
     long_description=long_description,
     # long_description_content_type="text/markdown", # default is rst
@@ -41,7 +43,8 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",        
+        "Programming Language :: Python :: 3.10",    
+        "Programming Language :: Python :: 3.11",              
         "Topic :: Software Development :: Libraries",
     ],
     # build cython modules    
