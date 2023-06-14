@@ -43,6 +43,7 @@ Usage
 ::
 
     import pxutil as px
+    from pxutil import exit_on_exception
 
     px.bash('ls')
 
@@ -50,12 +51,20 @@ Usage
 
     px.grep('ab','abc\ndef')
 
+    px.normal_path('~/project/src/../README.rst')
+
     px.trim_docstring('''
         ab
             cd
         ef
         '''
         )
+
+    @exit_on_exception
+    def to_int(any):
+        if isinstance(dict):
+            return Exception('dict is not supported to convert to int.')
+        return int(any)
 
 Test
 ====

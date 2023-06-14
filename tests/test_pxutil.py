@@ -7,7 +7,9 @@ For pytest to support importing local modules, must create a __init__.py file to
 # Somehow direct import works with magic with pytest, even without tox or install pxutil as a system package.
 # Not sure how it works exactly, rename __init__.py and setup.py from parent folder but it still works.
 import pxutil as px
-from pxutil import exit_on_exception
+from pxutil import exit_on_exception, normal_path
+import os
+import sys
 import pytest
 
 def test_bash():
@@ -103,3 +105,27 @@ def test_replace_in_file():
     #     f.seek(0)
     #     print(f.read())
     
+def test_normal_path():
+    # test normalization of a path with up-level references and redundant separators
+    assert normal_path('/usr/local//../bin/') == '/usr/bin'
+
+    # test resolution of a relative path to a full path
+    current_dir = os.getcwd()
+    assert normal_path('a.txt') == os.path.join(current_dir, 'a.txt')
+
+    # test resolution of a symbolic link to the actual path
+    # get full real path of current python interpreter
+    python_path = os.path.realpath(sys.executable)
+    os.symlink(python_path, 'tmp_python')
+    try:
+        assert normal_path('tmp_python') == python_path
+    finally:
+        os.remove('tmp_python')
+
+    # test expansion of a tilde to the user's home directory
+    if os.name == 'posix':
+        assert normal_path('~root/mydir') == '/root/mydir'
+
+    # test expansion of an environment variable reference to its value
+    os.environ['HOME'] = '/home/peter'
+    assert normal_path('$HOME/mydir') == '/home/peter/mydir'
