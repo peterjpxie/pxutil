@@ -6,6 +6,7 @@ Some handy utilities from Peter Jiping Xie
 
 import sys
 import re
+import os
 
 if sys.version_info < (3, 5):
     raise SystemError("Require python 3.5 or above.")
@@ -301,7 +302,11 @@ def main():
     # ret = time2seconds('2m')
     # print(ret)
     # pdb.set_trace()
-    test_exit_on_exception(1)
+    # test_exit_on_exception(1)
+    print(normal_path('a.txt'))
+    current_dir = os.getcwd()
+    print(os.path.join(current_dir, 'a.txt'))
+    assert normal_path('a.txt') == os.path.join(current_dir, 'a.txt')
     print('End of main()')
     
 if __name__ == "__main__":

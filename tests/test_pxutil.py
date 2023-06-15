@@ -109,8 +109,10 @@ def test_replace_in_file():
     
 def test_normal_path():
     # test resolution of a relative path to a full path
+    # Note: On CI windows runner, it asserts 'C:\\a.txt' == 'c:\\a.txt'.
+    #       realpath() returns 'C:\\a.txt' but os.getcwd() returns 'c:\' in lower case.
     current_dir = os.getcwd()
-    assert normal_path('a.txt') == os.path.join(current_dir, 'a.txt')
+    assert normal_path('a.txt').lower() == os.path.join(current_dir, 'a.txt').lower()
 
     if os.name == 'posix':
         # test normalization of a path with up-level references and redundant separators
