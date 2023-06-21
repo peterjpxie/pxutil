@@ -129,8 +129,10 @@ def test_normal_path():
             os.remove('tmp_python')
 
         # test expansion of an environment variable reference to its value
-        os.environ['HOME'] = '/home/peter'
-        assert normal_path('$HOME/mydir') == '/home/peter/mydir'
+        # Note: On mac, this does not work, '$HOME/mydir' becomes /System/Volumes/Data/home/peter/mydir.
+        if platform.system() == 'Linux':
+            os.environ['HOME'] = '/home/peter'
+            assert normal_path('$HOME/mydir') == '/home/peter/mydir'
 
         # test expansion of a tilde to the user's home directory
         # Note: On mac ~root is /private/var/root
