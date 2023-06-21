@@ -3,7 +3,7 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
-_version = "0.0.15"
+_version = "0.0.16"
 
 with open("README.rst") as readme:
     long_description = readme.read()
@@ -28,7 +28,7 @@ setup(
     url="https://github.com/peterjpxie/pxutil.git",
     license="MIT",
     packages=find_packages(), 
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     entry_points = {
         'console_scripts': ['bashx=pxutil.cli:bashx_main'],
     },
@@ -36,10 +36,9 @@ setup(
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: MacOS", # Should work but not fully tested
+        "Operating System :: MacOS", 
         "Operating System :: POSIX",
         "Operating System :: Microsoft :: Windows",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -51,6 +50,6 @@ setup(
     ext_modules=cythonize("*/*.pyx"), # language_level="3"
     # ext_modules=cythonize(extensions),
     zip_safe=False,   
-    # shared lib from Cython - No need! setup.py build and include them in wheel automatically.
+    # shared lib from Cython - No need! setup.py build and include them in the wheel automatically.
     # package_data={'': ['pxutil/*.so', 'pxutil/*.dll', 'pxutil/*.pyd']}, 
 )
