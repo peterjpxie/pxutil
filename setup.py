@@ -22,7 +22,7 @@ setup(
     version=_version,
     description="Some handy Python tools",
     long_description=long_description,
-    # long_description_content_type="text/markdown", # default is rst
+    long_description_content_type='text/x-rst', # default is rst # "text/markdown"
     author="Peter Jiping Xie",
     author_email="peter.jp.xie@gmail.com",
     url="https://github.com/peterjpxie/pxutil.git",
