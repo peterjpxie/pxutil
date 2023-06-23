@@ -19,13 +19,15 @@ Build distributions ( Replaced with Actions / cibuildwheel for multiple python v
 ======================================================================================================
 ::
 
+    # build for current python version
     rm -rf dist/* && python setup.py sdist bdist_wheel
 
-Build and Test - cibuildwheel locally
-=====================================
+Build and Test - cibuildwheel locally for current platform
+==========================================================
 ::
 
     pip install cibuildwheel
+    # containerized build
     cibuildwheel --platform linux . 
     # cibuildwheel config in pyproject.toml
 
@@ -39,7 +41,7 @@ Publish to pypi ( Replaced with Actions / cibuildwheel for multiple python versi
 
 Github Actions
 ==============
-The github action workflow has been configured to run build, test and publish to pypi.
+The github action workflow has been configured to run build, test and publish to pypi with cibuildwheel which builds cython extension for multiple python versions and platforms.
 
 The workflow is configured to run manually, not to waste resources on each commit, or automatically when a release is created.
 
@@ -89,3 +91,7 @@ Test
     or 
 
     tox # multiple python versions
+
+    or
+
+    cibuildwheel --platform linux . # multiple python versions in docker

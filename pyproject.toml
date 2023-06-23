@@ -8,8 +8,9 @@ build-backend = "setuptools.build_meta"
 
 # define what python versions to build, default to build all possible
 # list ref: https://cibuildwheel.readthedocs.io/en/stable/options/#build-skip
-build = ["cp37-*","cp38-*", "cp39-*","cp10-*","cp311-*"]
-# build = ["cp37-*","cp38-*"]
+# build = ["cp37-*","cp38-*", "cp39-*","cp10-*","cp311-*"]
+build = "cp37-*"
+skip = '*i686'
 
 test-requires = ["pytest", "pytest-cov"]
 
