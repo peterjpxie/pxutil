@@ -16,21 +16,29 @@ Install from source
     pip install .
 
 Build distributions ( Replaced with Actions / cibuildwheel for multiple python versions and platforms)
-===========================================================
+======================================================================================================
 ::
 
     rm -rf dist/* && python setup.py sdist bdist_wheel
 
+Build and Test - cibuildwheel locally
+=====================================
+::
+
+    pip install cibuildwheel
+    cibuildwheel --platform linux . 
+    # cibuildwheel config in pyproject.toml
+
 
 Publish to pypi ( Replaced with Actions / cibuildwheel for multiple python versions and platforms)
-===============
+==================================================================================================
 ::
 
     twine upload dist/*
 
 
-Actions
-===============
+Github Actions
+==============
 The github action workflow has been configured to run build, test and publish to pypi.
 
 The workflow is configured to run manually, not to waste resources on each commit, or automatically when a release is created.
@@ -76,8 +84,8 @@ Test
 
     cd pxutil
 
-    pytest
+    pytest # current python version
 
     or 
 
-    tox
+    tox # multiple python versions

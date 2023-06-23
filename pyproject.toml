@@ -6,6 +6,11 @@ build-backend = "setuptools.build_meta"
 # This is not required by pxutil and actually causing errors in CI
 # before-all = "apt install libpng-dev" 
 
+# define what python versions to build, default to build all possible
+# list ref: https://cibuildwheel.readthedocs.io/en/stable/options/#build-skip
+build = ["cp37-*","cp38-*", "cp39-*","cp10-*","cp311-*"]
+# build = ["cp37-*","cp38-*"]
+
 test-requires = ["pytest", "pytest-cov"]
 
 # Run the package tests using `pytest`
