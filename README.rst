@@ -15,14 +15,14 @@ Install from source
     or 
     pip install .
 
-Build distributions ( Replaced with Actions / cibuildwheel )
+Build distributions ( Replaced with Actions / cibuildwheel for multiple python versions and platforms)
 ===========================================================
 ::
 
     rm -rf dist/* && python setup.py sdist bdist_wheel
 
 
-Publish to pypi ( Replaced with Actions / cibuildwheel )
+Publish to pypi ( Replaced with Actions / cibuildwheel for multiple python versions and platforms)
 ===============
 ::
 
