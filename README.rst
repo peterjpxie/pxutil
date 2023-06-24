@@ -27,7 +27,7 @@ Build and Test - cibuildwheel locally for current platform
 ::
 
     pip install cibuildwheel
-    # containerized build
+    # build with docker
     cibuildwheel --platform linux . 
     # cibuildwheel config in pyproject.toml
 
