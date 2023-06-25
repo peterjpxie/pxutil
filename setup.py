@@ -3,9 +3,9 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
-_version = "0.0.18"
+_version = "0.0.19"
 
-with open("README.rst") as readme:
+with open("README.md") as readme:
     long_description = readme.read()
     # print(long_description)
 
@@ -22,7 +22,7 @@ setup(
     version=_version,
     description="Some handy Python tools",
     long_description=long_description,
-    long_description_content_type='text/x-rst', # default is rst # "text/markdown"
+    long_description_content_type='text/markdown', # default is text/x-rst # "text/markdown"
     author="Peter Jiping Xie",
     author_email="peter.jp.xie@gmail.com",
     url="https://github.com/peterjpxie/pxutil.git",
