@@ -90,3 +90,10 @@ or
 
 cibuildwheel --platform linux . # multiple python versions in docker
 ```
+
+## Places to Update Supported Python Versions
+```
+setup.py        # pypi description
+tox.ini         # tox test
+pyproject.toml  # cibuildwheel
+```
