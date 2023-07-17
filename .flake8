@@ -1,0 +1,4 @@
+
+[flake8]
+extend-ignore = W291,E501,E266,E262,F401,E121,E123,E126,E226,E24,E704,W503,W504,F841,W293,E265
+# extend-exclude = proto

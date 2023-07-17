@@ -19,3 +19,6 @@ test-requires = ["pytest", "pytest-cov"]
 test-command = [
     "pytest -v --cov={project}/pxutil {project}/tests",
 ]
+
+[tool.pyright]
+# exclude = ["some dir",]
