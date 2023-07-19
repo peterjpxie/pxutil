@@ -285,17 +285,27 @@ def test_exit_on_exception(aa=None):
         return Exception('sample error')
 
 
-def normal_path(path: str):
-    """ return a normalized path
-    
+def normal_path(path: str, resolve_symlink=False):
+    """return a normalized path
+
+    resolve_symlink: resolve symbolic link to the actual path
+
     calls os.path.x:
-    normpath: /usr/local//../bin/ => /usr/bin
-    realpath: a.txt => /home/user/project/a.txt (full path);  /usr/local/bin/python3 (symlink) => /usr/bin/python3.8
     expanduser: ~/a.txt => /home/user/a.txt
     expandvars: '$HOME/mydir' => /home/user/mydir
+    normpath: /usr/local//../bin/ => /usr/bin
+    realpath: a.txt => /home/user/project/a.txt (full path);  /usr/local/bin/python3 (symlink) => /usr/bin/python3.8
+    abspath: a.txt => /home/user/project/a.txt (full path); /usr/local/bin/python3 (symlink) => /usr/local/bin/python3; 
+            /usr/local//../bin/ => /usr/bin
+
+    Note: abspath does half realpath + normpath.
     """
-    from os.path import normpath, realpath, expanduser, expandvars
-    return realpath(normpath(expandvars(expanduser(path))))
+    from os.path import expanduser, expandvars, normpath, realpath, abspath
+
+    if resolve_symlink:
+        return realpath(normpath(expandvars(expanduser(path))))
+    else:
+        return abspath(expandvars(expanduser(path)))
 
 def main():
     """ main function for self test """

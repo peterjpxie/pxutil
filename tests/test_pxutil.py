@@ -124,7 +124,7 @@ def test_normal_path():
         python_path = os.path.realpath(sys.executable)
         os.symlink(python_path, 'tmp_python')
         try:
-            assert normal_path('tmp_python') == python_path
+            assert normal_path('tmp_python', resolve_symlink=True) == python_path
         finally:
             os.remove('tmp_python')
 
