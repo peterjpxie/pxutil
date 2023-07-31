@@ -79,7 +79,6 @@ class ChatAPI:
         self.url = url
         assert token, "OpenAI token cannot be None."
         self.token = token
-        print('token:', token)
         self.model = model
         self.messages = []
         self.system_content = system_content

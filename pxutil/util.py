@@ -23,7 +23,7 @@ if sys.version_info < (3, 7):
 
 # get TOKEN from environment variable
 OPENAPI_TOKEN = os.environ.get("OPENAPI_TOKEN", None)
-print('OPENAPI_TOKEN:', OPENAPI_TOKEN)
+# print('OPENAPI_TOKEN:', OPENAPI_TOKEN)
 
 # root_path is parent folder of this file
 root_path = path.dirname(path.abspath(__file__))
@@ -156,7 +156,6 @@ def post(url, data=None, headers={}, files=None, verify=True, amend_headers=True
         headers_new["Content-Type"] = "application/json"
         # headers_new["Authorization"] = "Bearer %s" % self.token
 
-    print('headers_new:', headers_new)
     # send post request
     try:
         # timeout in sec to avoid waiting on unreachable server, ref: https://requests.readthedocs.io/en/latest/user/advanced/#timeouts
