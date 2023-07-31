@@ -1,4 +1,7 @@
-#IDE 
+# temp files
+a.py
+a.txt
+# IDE 
 .vscode/*
 # cython c files
 pxutil/cython_pxutil.c

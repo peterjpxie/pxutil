@@ -29,6 +29,9 @@ setup(
     license="MIT",
     packages=find_packages(), 
     python_requires='>=3.7',
+    install_requires=[
+        'requests>=2.0.0',
+    ],    
     entry_points = {
         'console_scripts': ['bashx=pxutil.cli:bashx_main'],
     },
