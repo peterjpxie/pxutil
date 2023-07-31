@@ -8,7 +8,7 @@ Sample REST API
 POST https://api.openai.com/v1/chat/completions
 
 Content-Type: application/json
-Authorization: Bearer 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
+Authorization: Bearer <OPENAI_TOKEN>
 Content-Length: 269
 
 {
@@ -79,8 +79,8 @@ class ChatAPI:
         self.url = url
         assert token, "OpenAI token cannot be None."
         self.token = token
+        print('token:', token)
         self.model = model
-        # chatlog.info("openAI token: %s" % token)
         self.messages = []
         self.system_content = system_content
         if system_content:
@@ -112,6 +112,7 @@ class ChatAPI:
         #    ]
 
         headers = {"Authorization": "Bearer %s" % self.token}
+        print('headers:', headers)
         # no indent for payload to save possible tokens
         resp = post(self.url, headers=headers, data=json.dumps(payload))  # , indent=4
         if isinstance(resp, Exception):
