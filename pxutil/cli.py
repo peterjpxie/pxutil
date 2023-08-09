@@ -8,14 +8,29 @@ Refer: https://python-packaging.readthedocs.io/en/latest/command-line-scripts.ht
 import os
 import sys
 import logging
+from time import sleep
 from pxutil import bashx
 
-if sys.version_info < (3, 5):
-    raise Exception("Require python 3.5 or above.")
+#def bashx_main():
+#    cmd = ' '.join(sys.argv[1:])
+#    bashx(cmd)
 
-def bashx_main():
-    cmd = ' '.join(sys.argv[1:])
-    bashx(cmd)
+def loop_main():
+    """ px.loop CLI script
+
+    Loop a command with interval and number of loops
+    """
+    import argparse
+    parser = argparse.ArgumentParser(description='Loop a command')
+    parser.add_argument('cmd', type=str, help='command to loop, double quote if it contains spaces')
+    parser.add_argument('-i', '--interval', type=float, default=1.0, help='interval in seconds between loops')
+    parser.add_argument('-n', '--nloop', type=int, default=360000, help='number of loops, infinitely by default')
+    args = parser.parse_args()
+    
+    for _ in range(args.nloop):
+        bashx(args.cmd)
+        sleep(args.interval)
     
 if __name__ == "__main__":
-    bashx_main()
+    # self test
+    loop_main()

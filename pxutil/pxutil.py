@@ -8,8 +8,8 @@ import sys
 import re
 import os
 
-if sys.version_info < (3, 5):
-    raise SystemError("Require python 3.5 or above.")
+if sys.version_info < (3, 7):
+    raise SystemError("Require python 3.7 or above.")
 
 # util should not configure logging.basicConfig because it will change the logging of the python files which import this util.
 # logging.basicConfig(
@@ -278,11 +278,7 @@ def exit_on_exception(func):
     return wrapper
 
 
-@exit_on_exception
-def test_exit_on_exception(aa=None):
-    print('test')
-    if aa:
-        return Exception('sample error')
+
 
 
 def normal_path(path: str, resolve_symlink=False):
@@ -307,17 +303,64 @@ def normal_path(path: str, resolve_symlink=False):
     else:
         return abspath(expandvars(expanduser(path)))
 
+
+def is_running_foreground():
+    """Check if current script is running in foreground
+
+    Examples:
+    python a.py : True
+    python a.py & : False
+    python a.py > a.log : True
+    python a.py | tee a.log : True
+    nohup python a.py & : False
+    nohup python a.py : False (* special case, this is considered as background as input is ignored and output is redirected)
+
+    ref: https://stackoverflow.com/questions/24861351/how-to-detect-if-python-script-is-being-run-as-a-background-process
+    """
+    try:
+        # e.g.: python a.py
+        if os.getpgrp() == os.tcgetpgrp(sys.stdout.fileno()):
+            return True
+        else:
+            # when running as: python script.py &
+            return False
+    # e.g.: nohup python script.py &
+    # or : `python script.py > a.log` or `python script.py | tee a.log`
+    except OSError:
+        # Consider foreground if running with pipe redirection and stdin is on the terminal.
+        # isatty(0) checks if stdin(0) is connected to the terminal
+        # if os.isatty(0):
+        # e.g. python script.py > a.log
+        if sys.stdin.isatty():
+            return True
+        # nohup python script.py &
+        else:
+            return False
+
+
+def register_signal_ctrl_c():
+    """Register signal handler for ctrl+c"""
+    import signal
+    def signal_handler(sig, frame):
+        print(" You pressed Ctrl+C! Exiting...")
+        sys.exit(1)
+
+    # register only when running in foreground
+    if is_running_foreground():
+        signal.signal(signal.SIGINT, signal_handler)
+
 def main():
     """ main function for self test """
     # ret = time2seconds('2m')
     # print(ret)
     # pdb.set_trace()
+    # @exit_on_exception
+    # def test_exit_on_exception(aa=None):
+    #     print('test')
+    #     if aa:
+    #         return Exception('sample error')
     # test_exit_on_exception(1)
-    print(normal_path('a.txt'))
-    current_dir = os.getcwd()
-    print(os.path.join(current_dir, 'a.txt'))
-    assert normal_path('a.txt') == os.path.join(current_dir, 'a.txt')
-    print('End of main()')
+
     
 if __name__ == "__main__":
     main()

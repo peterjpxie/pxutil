@@ -28,13 +28,10 @@ setup(
     url="https://github.com/peterjpxie/pxutil.git",
     license="MIT",
     packages=find_packages(), 
-    python_requires='>=3.7',
+    python_requires='>=3.7', # temp: support 3.7 for now though officially built for 3.8+
     install_requires=[
         'requests>=2.0.0',
     ],    
-    entry_points = {
-        'console_scripts': ['bashx=pxutil.cli:bashx_main'],
-    },
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
@@ -53,4 +50,8 @@ setup(
     zip_safe=False,   
     # shared lib from Cython - No need! setup.py build and include them in the wheel automatically.
     # package_data={'': ['pxutil/*.so', 'pxutil/*.dll', 'pxutil/*.pyd']}, 
+    # cli
+    entry_points = {
+        'console_scripts': ['px.loop=pxutil.cli:loop_main'],
+    },
 )
