@@ -9,7 +9,7 @@ import os
 import sys
 import logging
 from time import sleep
-from pxutil import bashx
+from pxutil import (bashx, register_signal_ctrl_c)
 
 #def bashx_main():
 #    cmd = ' '.join(sys.argv[1:])
@@ -27,6 +27,7 @@ def loop_main():
     parser.add_argument('-n', '--nloop', type=int, default=360000, help='number of loops, infinitely by default')
     args = parser.parse_args()
     
+    register_signal_ctrl_c()
     for _ in range(args.nloop):
         bashx(args.cmd)
         sleep(args.interval)
