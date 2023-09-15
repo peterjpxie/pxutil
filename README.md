@@ -74,11 +74,9 @@ def to_int(any):
 ## Test
 
 ```
-pip3 install -U pytest tox pytest-cov 
-
 git clone https://github.com/peterjpxie/pxutil.git
-
 cd pxutil
+pip3 install -r tests/requirements.txt
 
 pytest # current python version
 

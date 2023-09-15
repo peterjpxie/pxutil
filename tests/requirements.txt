@@ -1,3 +1,5 @@
+requests
 pytest>=4.6
 pytest-cov>=2.8.1
 cython
+tox
