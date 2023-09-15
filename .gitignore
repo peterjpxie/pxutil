@@ -1,6 +1,7 @@
 # temp files
 a.py
 a.txt
+a.ipynb
 # IDE 
 .vscode/*
 # cython c files
