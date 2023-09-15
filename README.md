@@ -43,11 +43,9 @@ The workflow is configured to run manually, not to waste resources on each commi
 
 The publish job is executed only when a release is created.
 
-## Usage
-
+## Usage - Functions
 ```
 import pxutil as px
-from pxutil import exit_on_exception
 
 px.bash('ls')
 
@@ -64,11 +62,16 @@ px.trim_docstring('''
     '''
     )
 
-@exit_on_exception
+@px.exit_on_exception
 def to_int(any):
     if isinstance(dict):
         return Exception('dict is not supported to convert to int.')
     return int(any)
+```
+
+## Usage - CLI
+```
+px.loop -h  # run a command in loop
 ```
 
 ## Test
