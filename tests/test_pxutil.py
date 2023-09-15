@@ -138,5 +138,6 @@ def test_normal_path():
         # Note: On mac ~root is /private/var/root
         if platform.system() == 'Linux':
             assert normal_path('~root/mydir') == '/root/mydir'    
+        # NB: On macOS, ~root is /var/root sometimes, but /private/var/root other times.
         elif platform.system() == 'Darwin':
-            assert normal_path('~root/mydir') == '/private/var/root/mydir'
+            assert normal_path('~root/mydir') in ['/private/var/root/mydir', '/var/root/mydir']
