@@ -44,8 +44,9 @@ setup(
         "Programming Language :: Python :: 3.10",             
         "Topic :: Software Development :: Libraries",
     ],
-    # build cython modules    
-    ext_modules=cythonize("*/*.pyx"), # language_level="3"
+    # build cython modules  
+    ext_modules=cythonize("*/*_cy.py"), # pure python with cython type annotation  
+    # ext_modules=cythonize("*/*.pyx"), # language_level="3"
     # ext_modules=cythonize(extensions),
     zip_safe=False,   
     # shared lib from Cython - No need! setup.py build and include them in the wheel automatically.

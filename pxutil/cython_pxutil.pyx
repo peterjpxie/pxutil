@@ -1,3 +1,4 @@
+"""Deprecated c style type declaration, IMO"""
 # Install:
 #   pip install cython
 # 
