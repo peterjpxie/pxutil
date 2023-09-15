@@ -5,6 +5,8 @@
 
 Some handy Python utilities
 
+A sample to learn Python packaging
+
 ## Install from source
 
 ```
