@@ -11,7 +11,9 @@ build-backend = "setuptools.build_meta"
 # cibuildwheel does not support cp311 yet at least for cython
 # build = ["cp38-*", "cp39-*","cp310-*"]
 build = "cp311-*"
-skip = '*i686'
+# skip = '*i686'
+# Skip 32-bit builds
+skip = ["*-win32", "*-manylinux_i686"]
 
 test-requires = ["pytest", "pytest-cov"]
 
