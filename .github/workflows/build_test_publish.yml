@@ -1,3 +1,4 @@
+# Ref: https://github.com/pypa/cibuildwheel#example-setup
 name: Build, Test and Publish
 
 # on: [push, pull_request]
