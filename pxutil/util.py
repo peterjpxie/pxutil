@@ -5,9 +5,7 @@ utilities
 import json
 import logging
 import os
-# from dotmap import DotMap
 import re
-import sys
 from logging.handlers import RotatingFileHandler
 from os import path
 
@@ -15,18 +13,14 @@ import requests
 
 ### Settings ###
 LOG_LEVEL = logging.DEBUG  # DEBUG, INFO, WARNING, ERROR, CRITICAL
-LOG_FOLDER = "Logs"
+LOG_FOLDER = "logs"
 VALID_HTTP_RESP = (200, 201, 202)
 
-if sys.version_info < (3, 7):
-    raise SystemError("Requires Python 3.7 or above.")
-
-# get TOKEN from environment variable
-OPENAPI_TOKEN = os.environ.get("OPENAPI_TOKEN", None)
-# print('OPENAPI_TOKEN:', OPENAPI_TOKEN)
 
 # root_path is parent folder of this file
 root_path = path.dirname(path.abspath(__file__))
+# create log folder if not exist
+os.makedirs(path.join(root_path, LOG_FOLDER), exist_ok=True)
 
 # %(levelname)7s to align 7 bytes to right, %(levelname)-7s to left.
 common_formatter = logging.Formatter(
@@ -48,18 +42,15 @@ def setup_logger(log_file, level=logging.INFO, name="", formatter=common_formatt
     return logger
 
 
-for folder in [LOG_FOLDER]:
-    os.makedirs(path.join(root_path, folder), exist_ok=True)
-
 # default debug logger
 debug_log_filename = path.join(root_path, LOG_FOLDER, "debug.log")
-debuglog = setup_logger(debug_log_filename, LOG_LEVEL, "debug")
+log = setup_logger(debug_log_filename, LOG_LEVEL, "debug")
 
 # logger for API outputs
 api_formatter = logging.Formatter(
     "%(asctime)s: %(message)s", datefmt="%Y-%m-%d %I:%M:%S"
 )
-api_outputs_filename = path.join(root_path, LOG_FOLDER, "api_outputs.log")
+api_outputs_filename = path.join(root_path, LOG_FOLDER, "api.log")
 apilog = setup_logger(api_outputs_filename, LOG_LEVEL, "api", formatter=api_formatter)
 
 
@@ -107,7 +98,7 @@ def pretty_print_request_json(request):
         "{}\n{}\n\n{}\n\n{}\n".format(
             "-----------Request----------->",
             request.method + " " + request.url,
-            "\n".join("{}: {}".format(k, v) for k, v in request.headers.items()),
+            "\n".join(f"{k}: {v}" for k, v in request.headers.items()),
             req_body,
         )
     )
@@ -131,7 +122,7 @@ def pretty_print_response_json(response):
         "{}\n{}\n\n{}\n\n{}\n".format(
             "<-----------Response-----------",
             "Status code:" + str(response.status_code),
-            "\n".join("{}: {}".format(k, v) for k, v in response.headers.items()),
+            "\n".join(f"{k}: {v}" for k, v in response.headers.items()),
             resp_body,
         )
     )
@@ -163,7 +154,7 @@ def post(url, data=None, headers={}, files=None, verify=True, amend_headers=True
             url, data=data, headers=headers_new, files=files, verify=verify, timeout=(3.1, 60)
         )
     except Exception as ex:
-        debuglog.error("requests.post() failed with exception: %s" % ex)
+        log.error("requests.post() failed with exception: %s" % ex)
         return ex
 
     # pretty request and response into API log file
@@ -173,12 +164,12 @@ def post(url, data=None, headers={}, files=None, verify=True, amend_headers=True
 
     if resp.status_code not in VALID_HTTP_RESP:
         error = "requests.post() failed with response code %s." % resp.status_code
-        debuglog.error(error)
+        log.error(error)
         return Exception(error)
 
     try:
         return resp.json()
     except ValueError:
         error = "requests.post() failed to parse response body in JSON format."
-        debuglog.error(error)
+        log.error(error)
         return Exception(error)

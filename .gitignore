@@ -4,9 +4,8 @@ a.txt
 a.ipynb
 # IDE 
 .vscode/*
-# cython c files
+# cython output c files
 pxutil/*_cy.c
-pxutil/cython_pxutil.c
 
 # cibuildwheel
 wheelhouse/*

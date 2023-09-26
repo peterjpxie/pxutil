@@ -57,14 +57,17 @@ Content-Length: 339
 """
 import json
 import os
-from os import path
 
-from .util import OPENAPI_TOKEN, post
+
+# from .pxutil import post
 # NB: 'from util' causes tox to fail with error: ModuleNotFoundError, which seems a bug of tox IMO. Avoid it for now.
-# try: # when `python pxutil/chat.py`
-#     from .util import OPENAPI_TOKEN, post
-# except ImportError: # when `python chat.py` ImportError: attempted relative import with no known parent package
-#     from util import OPENAPI_TOKEN, post
+try: # when `python pxutil/chat.py`
+    from .pxutil import post
+except ImportError: # when `python chat.py` ImportError: attempted relative import with no known parent package
+    from pxutil import post
+
+# get TOKEN from environment variable
+OPENAPI_TOKEN = os.environ.get("OPENAPI_TOKEN", None)
 
 class ChatAPI:
     """
@@ -113,7 +116,6 @@ class ChatAPI:
         #    ]
 
         headers = {"Authorization": "Bearer %s" % self.token}
-        print('headers:', headers)
         # no indent for payload to save possible tokens
         resp = post(self.url, headers=headers, data=json.dumps(payload))  # , indent=4
         if isinstance(resp, Exception):
@@ -130,6 +132,7 @@ class ChatAPI:
         return Exception(
             "Chat API request failed with no answer choices."
         )  # default if no answer is found in the response
+
 
 if __name__ == "__main__":
     # self test

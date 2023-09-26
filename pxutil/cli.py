@@ -11,9 +11,6 @@ import logging
 from time import sleep
 from pxutil import (bashx, register_signal_ctrl_c)
 
-#def bashx_main():
-#    cmd = ' '.join(sys.argv[1:])
-#    bashx(cmd)
 
 def loop_main():
     """ px.loop CLI script
