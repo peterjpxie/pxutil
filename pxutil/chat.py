@@ -59,12 +59,12 @@ import json
 import os
 
 
-# from .pxutil import post
+from .pxutil import post
 # NB: 'from util' causes tox to fail with error: ModuleNotFoundError, which seems a bug of tox IMO. Avoid it for now.
-try: # when `python pxutil/chat.py`
-    from .pxutil import post
-except ImportError: # when `python chat.py` ImportError: attempted relative import with no known parent package
-    from pxutil import post
+# try: # when `python pxutil/chat.py`
+#     from .pxutil import post
+# except ImportError: # when `python chat.py` ImportError: attempted relative import with no known parent package
+#     from pxutil import post
 
 # get TOKEN from environment variable
 OPENAPI_TOKEN = os.environ.get("OPENAPI_TOKEN", None)
