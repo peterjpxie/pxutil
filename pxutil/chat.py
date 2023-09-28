@@ -59,7 +59,8 @@ import json
 import os
 
 
-from .pxutil import post
+# from .pxutil import post
+from pxutil import post
 # NB: 'from util' causes tox to fail with error: ModuleNotFoundError, which seems a bug of tox IMO. Avoid it for now.
 # try: # when `python pxutil/chat.py`
 #     from .pxutil import post
