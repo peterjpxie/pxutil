@@ -8,7 +8,7 @@ Sample REST API
 POST https://api.openai.com/v1/chat/completions
 
 Content-Type: application/json
-Authorization: Bearer <OPENAI_TOKEN>
+Authorization: Bearer <OPENAI_API_KEY>
 Content-Length: 269
 
 {
@@ -59,7 +59,7 @@ import json
 import os
 
 
-# from .pxutil import post
+# add .pxutil.post to pxutil/__init__.py so it can be imported as `from pxutil import post` both outside and inside pxutil package
 from pxutil import post
 # NB: 'from util' causes tox to fail with error: ModuleNotFoundError, which seems a bug of tox IMO. Avoid it for now.
 # try: # when `python pxutil/chat.py`
@@ -79,46 +79,48 @@ class ChatAPI:
         self,
         url="https://api.openai.com/v1/chat/completions",
         token=OPENAI_API_KEY,  # default to environment variable OPENAI_API_KEY
-        system_content=None,
+        system_msg=None,
         model="gpt-3.5-turbo",
+        remember_chat_history=True,
     ):
         self.url = url
         assert token, "OpenAI token cannot be None."
         self.token = token
         self.model = model
-        self.messages = []
-        self.system_content = system_content
-        if system_content:
-            self.messages.append({"role": "system", "content": system_content})
+        self.system_msg = system_msg
+        self.remember_chat_history = remember_chat_history
+        self.chat_history = [] # list of past chat messages
 
-    def chat(self, question: str, last_question=None, last_answer=None):
-        """chat with a question and get an answer both in string format
+
+    def chat(self, question: str):
+        """Ask a question and get an answer
 
         return: answer str or Exception
         """
-        # add last chat message
-        if last_question and last_answer:
-            self.messages.append({"role": "user", "content": last_question})
-            self.messages.append({"role": "assistant", "content": last_answer})
-
-        self.messages.append({"role": "user", "content": question})
+        messages = []
+        # add system message
+        if self.system_msg:
+            messages.append({"role": "system", "content": self.system_msg})        
+        # add chat history
+        if self.remember_chat_history and len(self.chat_history) > 0:
+            messages.extend(self.chat_history)
+        # add current question
+        messages.append({"role": "user", "content": question})
         payload = {
             "model": self.model,  # "gpt-3.5-turbo",
-            "messages": self.messages,
+            "messages": messages,
         }
         # messages sample:
         #    "messages": [
-        #        {"role": "system", "content": "You are a helpful assistant."}, # appreciation help get a better answer
-        #        # {"role": "user", "content": "Who won the world series in 2020?"},
-        #        ### assistant for context history
-        #        # {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
-        #        # {"role": "user", "content": "Where was it played?"},
-        #        {"role": "user", "content": "Write a python function for check prime number?"},
+        #        {"role": "system", "content": "You are a helpful assistant."}, # appreciation may help get a better answer
+        #        {"role": "user", "content": "Who won the world series in 2020?"},
+        #        {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
+        #        {"role": "user", "content": "Where was it played?"},
         #    ]
 
         headers = {"Authorization": "Bearer %s" % self.token}
         # no indent for payload to save possible tokens
-        resp = post(self.url, headers=headers, data=json.dumps(payload))  # , indent=4
+        resp = post(self.url, headers=headers, data=json.dumps(payload))
         if isinstance(resp, Exception):
             return Exception("Chat API request failed with error: %s." % resp)
 
@@ -127,7 +129,10 @@ class ChatAPI:
                 if choice["index"] == 0 and choice["finish_reason"] in ("stop", None):
                     answer = choice["message"]["content"]
                     answer = answer.strip("\n").strip()
-                    # chatlog_api.info("Answer: %s\n%s" % ("-" * 6 + ">", answer))
+                    # record chat history
+                    if self.remember_chat_history:
+                        self.chat_history.append({"role": "user", "content": question})
+                        self.chat_history.append(choice["message"])
                     return answer
 
         return Exception(
@@ -137,7 +142,8 @@ class ChatAPI:
 
 if __name__ == "__main__":
     # self test
-    chatapi = ChatAPI()
-    # answer = chatapi.chat("Who won the world series in 2020?")
+    chatapi = ChatAPI() # remember_chat_history=False
     answer = chatapi.chat("who are you?")
     print(answer)
+    # answer = chatapi.chat("how old are you?")
+    # print(answer)

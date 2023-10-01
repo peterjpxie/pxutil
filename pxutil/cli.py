@@ -36,11 +36,11 @@ def chat_main():
 
     chat based on chatGPT API
     """
-    parser = argparse.ArgumentParser(description='Chat cli. Export OPENAI_API_KEY first.')
+    parser = argparse.ArgumentParser(description='Chat cli. Set env variable OPENAI_API_KEY first.')
     args = parser.parse_args()
     
     register_signal_ctrl_c()
-    print('todo')
+    
 
 
 if __name__ == "__main__":
