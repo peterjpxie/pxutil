@@ -68,7 +68,7 @@ from pxutil import post
 #     from pxutil import post
 
 # get TOKEN from environment variable
-OPENAPI_TOKEN = os.environ.get("OPENAPI_TOKEN", None)
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", None)
 
 class ChatAPI:
     """
@@ -78,7 +78,7 @@ class ChatAPI:
     def __init__(
         self,
         url="https://api.openai.com/v1/chat/completions",
-        token=OPENAPI_TOKEN,  # default to environment variable OPENAPI_TOKEN
+        token=OPENAI_API_KEY,  # default to environment variable OPENAI_API_KEY
         system_content=None,
         model="gpt-3.5-turbo",
     ):

@@ -36,7 +36,7 @@ def chat_main():
 
     chat based on chatGPT API
     """
-    parser = argparse.ArgumentParser(description='Chat cli. Export OPENAPI_TOKEN first.')
+    parser = argparse.ArgumentParser(description='Chat cli. Export OPENAI_API_KEY first.')
     args = parser.parse_args()
     
     register_signal_ctrl_c()
