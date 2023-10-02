@@ -3,7 +3,7 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
-_version = "0.0.20"
+_version = "0.0.21"
 
 with open("README.md") as readme:
     long_description = readme.read()
@@ -28,7 +28,7 @@ setup(
     url="https://github.com/peterjpxie/pxutil.git",
     license="MIT",
     packages=find_packages(),
-    python_requires='>=3.7', # temp: support 3.7 for now though officially built for 3.8+
+    python_requires='>=3.8',
     install_requires=[
         'requests>=2.1.0',
         'cython>=3.0.0',
