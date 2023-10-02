@@ -54,6 +54,8 @@ setup(
     # package_data={'': ['pxutil/*.so', 'pxutil/*.dll', 'pxutil/*.pyd']},
     # cli
     entry_points = {
-        'console_scripts': ['px.loop=pxutil.cli:loop_main'],
+        'console_scripts': ['px.loop=pxutil.cli:loop_main',
+                            'px.chat=pxutil.cli:chat_main',
+                            'chat=pxutil.cli:chat_main'],
     },
 )
