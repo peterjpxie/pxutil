@@ -30,7 +30,7 @@ setup(
     packages=find_packages(),
     python_requires='>=3.7', # temp: support 3.7 for now though officially built for 3.8+
     install_requires=[
-        'requests>=2.0.0',
+        'requests>=2.1.0',
         'cython>=3.0.0',
     ],
     classifiers=[
