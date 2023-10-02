@@ -74,6 +74,7 @@ def to_int(any):
 ## Usage - CLI
 ```
 px.loop -h  # run a command in loop
+px.chat -h  # chat cli based on chatGPT
 ```
 
 ## Test
