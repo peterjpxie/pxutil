@@ -31,6 +31,7 @@ setup(
     python_requires='>=3.7', # temp: support 3.7 for now though officially built for 3.8+
     install_requires=[
         'requests>=2.0.0',
+        'cython>=3.0.0',
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
