@@ -1,5 +1,6 @@
+setuptools
 requests
-pytest>=4.6
-pytest-cov>=2.8.1
+pytest
+pytest-cov
 cython
 tox
