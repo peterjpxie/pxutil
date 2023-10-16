@@ -58,6 +58,8 @@ setup(
     entry_points = {
         'console_scripts': ['px.loop=pxutil.cli:loop_main',
                             'px.chat=pxutil.cli:chat_main',
-                            'chat=pxutil.cli:chat_main'],
+                            'chat=pxutil.cli:chat_main',
+                            'px.runc=pxutil.cli:runc_main',
+        ]
     },
 )

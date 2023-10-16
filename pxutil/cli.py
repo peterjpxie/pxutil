@@ -10,10 +10,11 @@ import sys
 import logging
 from time import sleep
 import argparse
+import shutil
 
 # add .pxutil functions / classes to pxutil/__init__.py so that it can be imported as `from pxutil import <func>` both outside and inside pxutil package
 from pxutil import (bashx, register_signal_ctrl_c, ChatAPI)
-
+import pxutil as px
 
 def loop_main():
     """ px.loop CLI script
@@ -54,6 +55,28 @@ def chat_main():
         answer = chat.chat(question)
         print(answer)
 
+
+def runc_main():
+    """ px.runc CLI script
+    
+    Compile single C file with gcc and execute it.
+    """ 
+
+    ## Parse command line arguments.
+    parser = argparse.ArgumentParser(description='Compile single C file with gcc and execute it.')
+    parser.add_argument("file", help="C file to compile and run")
+    parser.add_argument("-O", "--optimization", type=int, default=0, help="optimization level (0, 1, 2, 3, s, g, fast), default: 0")
+    args = parser.parse_args()
+
+    ## Check if gcc is installed.
+    if not shutil.which("gcc"):
+        print("gcc is not installed. Exiting...")
+        sys.exit(1)
+        
+    ## main
+    cmd = f"gcc -O{args.optimization} {args.file} -o a.out && ./a.out"
+    bashx(cmd)
+    
 
 if __name__ == "__main__":
     # self test
