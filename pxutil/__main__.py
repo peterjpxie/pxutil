@@ -8,7 +8,9 @@ pip.__main__.py
 """
 import argparse
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='This is a sample __main__.py to execute as `python -m pxutil.`')
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="This is a sample __main__.py to execute as `python -m pxutil.`"
+    )
     args = parser.parse_args()
-    print('This is a sample __main__.py to execute as `python -m pxutil.`')
+    print("This is a sample __main__.py to execute as `python -m pxutil.`")

@@ -49,12 +49,16 @@ The publish job is executed only when a release is created.
 ```
 import pxutil as px
 
-px.bash('ls')
+# run a command and capture stdout, stderr
+r = px.bash('ls')
+print(r.stdout)
 
+# run a command like bash -x, not capture stdout, stderr
 px.bashx('ls')
 
 px.grep('ab','abc\ndef')
 
+# normalize a path, by default no symlink resolution
 px.normal_path('~/project/src/../README.rst')
 
 px.trim_docstring('''
@@ -64,6 +68,15 @@ px.trim_docstring('''
     '''
     )
 
+# change work directory
+with px.set_work_path("~") as p:
+    os.listdir()
+
+# import any module in a path
+conf = px.import_any('~/config/config1.py')
+print(conf.server_ip)
+
+# exit program if return value is an exception
 @px.exit_on_exception
 def to_int(any):
     if isinstance(dict):
@@ -79,7 +92,6 @@ px.runc -h  # compile and run single c file with gcc
 ```
 
 ## Test
-
 ```
 git clone https://github.com/peterjpxie/pxutil.git
 cd pxutil

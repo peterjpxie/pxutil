@@ -4,6 +4,7 @@ Some handy utilities from Peter Jiping Xie
 """
 # __all__ = ['bash','trim_docstring','grep']
 
+
 import sys
 import re
 import os
@@ -11,6 +12,8 @@ import json
 import logging
 from logging.handlers import RotatingFileHandler
 from os import path
+import os.path as ospath
+from contextlib import contextmanager
 
 import requests
 
@@ -70,7 +73,7 @@ def pretty_json(json_str):
         return json.dumps(json_dict, indent=4)
     # ValueError includes: UnicodeDecodeError (e.g. json_str is image binary), json.decoder.JSONDecodeError etc.
     # TypeError includes: dict, int etc.
-    except (ValueError, TypeError): 
+    except (ValueError, TypeError):
         return json_str
 
 
@@ -90,11 +93,16 @@ def pretty_print_request_json(request):
     if isinstance(req_body, bytes):
         try:
             req_body = req_body.decode("utf-8")
-        except UnicodeDecodeError:           
+        except UnicodeDecodeError:
             # replace form raw data with string '<binary raw data>'
             if "multipart/form-data" in request.headers.get("Content-Type"):
-                req_body = re.sub(b'(\r\n\r\n)(.*?)(\r\n--)',br'\1<binary raw data>\3', req_body,flags=re.DOTALL)
-                req_body = req_body.decode('utf-8')
+                req_body = re.sub(
+                    b"(\r\n\r\n)(.*?)(\r\n--)",
+                    rb"\1<binary raw data>\3",
+                    req_body,
+                    flags=re.DOTALL,
+                )
+                req_body = req_body.decode("utf-8")
             # else unchanged as bytes
             # print(req_body)
 
@@ -106,6 +114,7 @@ def pretty_print_request_json(request):
             req_body,
         )
     )
+
 
 def pretty_print_response_json(response):
     """pretty print response in json format
@@ -155,7 +164,12 @@ def post(url, data=None, headers={}, files=None, verify=True, amend_headers=True
     try:
         # timeout in sec to avoid waiting on unreachable server, ref: https://requests.readthedocs.io/en/latest/user/advanced/#timeouts
         resp = requests.post(
-            url, data=data, headers=headers_new, files=files, verify=verify, timeout=(3.1, 60)
+            url,
+            data=data,
+            headers=headers_new,
+            files=files,
+            verify=verify,
+            timeout=(3.1, 60),
         )
     except Exception as ex:
         log.error("requests.post() failed with exception: %s" % ex)
@@ -180,18 +194,18 @@ def post(url, data=None, headers={}, files=None, verify=True, amend_headers=True
 
 
 def bash(cmd, encoding=None):
-    """    
+    """
     subprocess.run with intuitive options to execute system commands just like shell bash command.
-    
+
     Inspired by https://pypi.org/project/bash/.
-    
-    cmd: string 
+
+    cmd: string
     return: CompletedProcess object in text (decode as locale encoding), with attributes stdout, stderr and returncode.
-    
-    Usage example: 
+
+    Usage example:
     ret = bash('ls')
     print(ret.stdout, ret.stderr, ret.returncode)
-    
+
     Warning of using shell=True: https://docs.python.org/3/library/subprocess.html#security-considerations
     """
     from subprocess import run, PIPE  # Popen, CompletedProcess
@@ -203,14 +217,16 @@ def bash(cmd, encoding=None):
         7,
     ):  # version_info is actually a tuple, so compare with a tuple
         if encoding:
-            return run(cmd, shell=True, capture_output=True, text=True, encoding=encoding)
+            return run(
+                cmd, shell=True, capture_output=True, text=True, encoding=encoding
+            )
         else:
             return run(cmd, shell=True, capture_output=True, text=True)
 
     elif sys.version_info >= (3, 5):
-        if encoding is None:        
+        if encoding is None:
             # get system default locale encoding
-            encoding=locale.getdefaultlocale()[1] 
+            encoding = locale.getdefaultlocale()[1]
         # print('encoding: %s' % encoding)
         r = run(cmd, shell=True, stdout=PIPE, stderr=PIPE)
         r.stdout = r.stdout.decode(encoding)
@@ -219,36 +235,37 @@ def bash(cmd, encoding=None):
     else:
         raise Exception("Require python 3.5 or above.")
 
+
 def bashx(cmd, x=True, e=False):
-    """    
+    """
     run system cmd like bash -x
-    
+
     Print the cmd with + prefix before executing
-    Don't capture the output or error 
-    
+    Don't capture the output or error
+
     Arguments
     ---------
     cmd: string - command to run
-    x:  When True, print the command with prefix + like shell 'bash -x' before running it 
+    x:  When True, print the command with prefix + like shell 'bash -x' before running it
     e:  When True, exit the python program when returncode is not 0, like shell 'bash -e'.
-    
+
     return
     ------
     CompletedProcess object with only returncode.
-    
+
     Shell environment variables
     ---------------------------
     You can set the following environment variables which have the same effect of but overwrite argument options.
-    BASH_CMD_PRINT=True     same as x=True    
+    BASH_CMD_PRINT=True     same as x=True
     BASH_EXIT_ON_ERROR=True same as e=True
 
-    Usage example: 
+    Usage example:
     ret = shx('ls')
     print(ret.returncode)
-    
+
     Warning of using shell=True: https://docs.python.org/3/library/subprocess.html#security-considerations
     """
-    from subprocess import run # CompletedProcess
+    from subprocess import run  # CompletedProcess
     import sys
     import os
 
@@ -256,44 +273,48 @@ def bashx(cmd, x=True, e=False):
         3,
         5,
     ):  # version_info is actually a tuple, so compare with a tuple
-        x_env = os.getenv('BASH_CMD_PRINT', None)
+        x_env = os.getenv("BASH_CMD_PRINT", None)
         # BASH_CMD_PRINT overwrites x argument
         if x_env is not None:
-            if x_env.lower() == 'true':
+            if x_env.lower() == "true":
                 x = True
-            elif x_env.lower() == 'false':
+            elif x_env.lower() == "false":
                 x = False
 
-        e_env = os.getenv('BASH_EXIT_ON_ERROR', None)
+        e_env = os.getenv("BASH_EXIT_ON_ERROR", None)
         # BASH_EXIT_ON_ERROR overwrites x argument
         if e_env is not None:
-            if e_env.lower() == 'true':
+            if e_env.lower() == "true":
                 e = True
-            elif e_env.lower() == 'false':
+            elif e_env.lower() == "false":
                 e = False
 
         if x:
-            print('+ %s' % cmd)
+            print("+ %s" % cmd)
 
-        ret=run(cmd, shell=True)
-        
-        if e and ret.returncode !=0:
-            print('[Error] Command returns error code %s. Exiting the program...' % ret.returncode)
+        ret = run(cmd, shell=True)
+
+        if e and ret.returncode != 0:
+            print(
+                "[Error] Command returns error code %s. Exiting the program..."
+                % ret.returncode
+            )
             sys.exit(1)
         else:
             return ret
     else:
         raise Exception("Require python 3.5 or above.")
 
+
 def trim_docstring(docstring):
     """
     Trim leading indents, leading and trailing blank lines from multiple liner using triple quote like docstring.
-    
+
     Reference: https://www.python.org/dev/peps/pep-0257/#handling-docstring-indentation
-    
+
     Argument: multiple liner string, typically using triple quote.
-    Return: trimmed multiple line string 
-    
+    Return: trimmed multiple line string
+
     Note: textwrap.dedent(docstring) does the same job, but not removing leading blank lines.
     """
     import sys
@@ -326,23 +347,23 @@ def trim_docstring(docstring):
 
 
 def grep(pattern, string=None, filename=None):
-    """ simulate linux grep command
-    
+    """simulate linux grep command
+
     return lines matching a pattern in a string or a file.
-    
+
     Parameters:
     pattern: regular expression string
-    
+
     Usage examples:
     result = grep('keyword', filename='a.txt' )
     for i in result:
         print(i)
-        
-    Notes: 
+
+    Notes:
     If the matched list is too big, you can modify it to use yield generator.
     """
     if string == None and filename == None:
-        print('grep: No string nor filename provided in the arguments.')
+        print("grep: No string nor filename provided in the arguments.")
         return []
     if string != None:
         extended_pattern = ".*" + pattern + ".*"
@@ -355,10 +376,11 @@ def grep(pattern, string=None, filename=None):
                 result += re.findall(extended_pattern, l)
         return result
 
+
 def replace_in_file(files, old, new, backup=None):
     """
     Replace in place directly on a file.
-    
+
     Arguments:
     files - single or list of files, e.g. 'a.txt' or ['a.txt',]
     old - old string to replace
@@ -371,35 +393,39 @@ def replace_in_file(files, old, new, backup=None):
         for line in file:
             # yes, this print will write into the file instead to stdout.
             # end = '' so it does not print another blank new line.
-            print(line.replace(old, new), end='')   
+            print(line.replace(old, new), end="")
+
 
 def time2seconds(time):
-    """ delta time string to number of seconds
+    """delta time string to number of seconds
 
     time: e.g. '2d' for 2 days, supported units: d-day, h-hour, m-minute, s-second
     return: integer number of seconds
 
     Note: Month and year duration varies. Not worth doing for the sake of simplicity.
     """
-    assert len(re.findall(r'^\d+[s|m|h|d]$', str(time))) == 1, 'Invalid time string format.'
-    tmap = {'s':1,'m':60,'h':3600,'d':3600 * 24}
+    assert (
+        len(re.findall(r"^\d+[s|m|h|d]$", str(time))) == 1
+    ), "Invalid time string format."
+    tmap = {"s": 1, "m": 60, "h": 3600, "d": 3600 * 24}
     unit = time[-1]
     value = int(time[:-1])
     return value * tmap[unit]
 
-def purge(dir, age='0s', filename_filter='*'):
-    """ Purge files and subfolders older than certain age
-    
+
+def purge(dir, age="0s", filename_filter="*"):
+    """Purge files and subfolders older than certain age
+
     Params
     ------
     dir:   directory to purge files and subfolders
     age:    e.g. '2h', support d-day, h-hour, m-minute, s-second
-    filename_filter:  glob format, e.g. debug.log* 
-    
+    filename_filter:  glob format, e.g. debug.log*
+
     Usage examples:
     purge('/root/tmp/', '24h', 'debug.log*')
 
-    Note: It retains the parent folder dir. Use shutil.rmtree if you want to remove the folder as well. 
+    Note: It retains the parent folder dir. Use shutil.rmtree if you want to remove the folder as well.
     """
     import os
     import time
@@ -411,7 +437,7 @@ def purge(dir, age='0s', filename_filter='*'):
         return 1
 
     now = time.time()
-    fullpath = os.path.join(dir,filename_filter)
+    fullpath = os.path.join(dir, filename_filter)
 
     for f in glob(fullpath):
         # use ctime instead of mtime. e.g. youtube-dl downloads a old video from youtube, mtime is retained, but ctime is when it is downloaded.
@@ -421,23 +447,24 @@ def purge(dir, age='0s', filename_filter='*'):
                 try:
                     os.remove(f)
                 except OSError as e:
-                    print('Failed to remove %s. Reason: %s' % (f, e))
+                    print("Failed to remove %s. Reason: %s" % (f, e))
             elif os.path.isdir(f):
-                shutil.rmtree(f,ignore_errors=True)        
+                shutil.rmtree(f, ignore_errors=True)
 
 
 def exit_on_exception(func):
     """Decorator to exit if func returns an exception(error)"""
+
     def wrapper(*args, **kwargs):
-        ret=func(*args,**kwargs)        
-        if isinstance(ret,Exception):
-            print(f'[Error] Program exits because {func.__name__}() failed with error:\n{ret}')            
+        ret = func(*args, **kwargs)
+        if isinstance(ret, Exception):
+            print(
+                f"[Error] Program exits because {func.__name__}() failed with error:\n{ret}"
+            )
             sys.exit(1)
         return ret
+
     return wrapper
-
-
-
 
 
 def normal_path(path: str, resolve_symlink=False):
@@ -450,7 +477,7 @@ def normal_path(path: str, resolve_symlink=False):
     expandvars: '$HOME/mydir' => /home/user/mydir
     normpath: /usr/local//../bin/ => /usr/bin
     realpath: a.txt => /home/user/project/a.txt (full path);  /usr/local/bin/python3 (symlink) => /usr/bin/python3.8
-    abspath: a.txt => /home/user/project/a.txt (full path); /usr/local/bin/python3 (symlink) => /usr/local/bin/python3; 
+    abspath: a.txt => /home/user/project/a.txt (full path); /usr/local/bin/python3 (symlink) => /usr/local/bin/python3;
             /usr/local//../bin/ => /usr/bin
 
     Note: abspath does half realpath + normpath.
@@ -500,6 +527,7 @@ def is_running_foreground():
 def register_signal_ctrl_c():
     """Register signal handler for ctrl+c"""
     import signal
+
     def signal_handler(sig, frame):
         print(" You pressed Ctrl+C! Exiting...")
         sys.exit(1)
@@ -509,9 +537,80 @@ def register_signal_ctrl_c():
         signal.signal(signal.SIGINT, signal_handler)
 
 
+@contextmanager
+def set_work_path(path):
+    """With statement to set the cwd within the context
+
+    Params
+    ------
+    path: The path string to the cwd. Note this path will be automatically normalized by normal_path().
+
+    Yield: cwd path string
+
+    Example:
+    with set_work_path('./tmp') as p:
+        os.system('ls')
+    """
+    origin = os.getcwd()
+    try:
+        path = normal_path(path)
+        os.chdir(path)
+        yield path
+    finally:
+        os.chdir(origin)
+
+
+@contextmanager
+def prepend_sys_path(path):
+    """With statement to prepend path to sys.path within the context
+
+    path: The path string to prepend. Note this path will be automatically normalized by normal_path().
+    Yield: normalized path string
+
+    Example:
+    with prepend_sys_path('./tmp') as p:
+        import this_module
+    """
+    sys_path_changed = False
+    try:
+        path = normal_path(path)
+        if path not in sys.path:
+            sys.path.insert(0, path)
+            sys_path_changed = True
+        yield path
+    finally:
+        if sys_path_changed:
+            sys.path.remove(path)
+
+
+def import_any(path: str):
+    """import any module from a path regardless of sys.path
+
+    It will automatically prepend the parent directory of path to sys.path if not already in, and remove it after import.
+
+    Params
+    ------
+    path: path to a module, e.g., ./config/a.py, /home/user/config/a.py
+    return: imported module
+
+    Usage:
+        a = import_any('./config/a.py')
+        a.func()
+    """
+    from importlib import import_module
+
+    path = normal_path(path)
+    if not ospath.isfile(path):
+        raise FileNotFoundError(f"Failed to import as file {path} does not exist.")
+
+    with prepend_sys_path(ospath.dirname(path)):
+        module_name = ospath.splitext(ospath.basename(path))[0]
+        module = import_module(module_name)
+        return module
+
 
 class ChatAPI:
-    """ chat based on chatGPT API
+    """chat based on chatGPT API
 
     Sample REST API
     ---------------
@@ -564,14 +663,17 @@ class ChatAPI:
         ]
     }
     """
+
     def __init__(
         self,
         url="https://api.openai.com/v1/chat/completions",
-        token=os.environ.get("OPENAI_API_KEY", None),  # default to environment variable OPENAI_API_KEY
+        token=os.environ.get(
+            "OPENAI_API_KEY", None
+        ),  # default to environment variable OPENAI_API_KEY
         system_msg=None,
-        model="gpt-3.5-turbo", # gpt-4 etc.
+        model="gpt-3.5-turbo",  # gpt-4 etc.
         remember_chat_history=True,
-        max_chat_history=2, # each chat has 2 messages, a question and an answer
+        max_chat_history=2,  # each chat has 2 messages, a question and an answer
     ):
         self.url = url
         assert token, "OpenAI token cannot be None."
@@ -579,9 +681,8 @@ class ChatAPI:
         self.model = model
         self.system_msg = system_msg
         self.remember_chat_history = remember_chat_history
-        self.chat_history = [] # list of past chat messages
+        self.chat_history = []  # list of past chat messages
         self.max_chat_history = max_chat_history
-
 
     def chat(self, question: str):
         """Ask a question and get an answer
@@ -591,11 +692,11 @@ class ChatAPI:
         messages = []
         # add system message
         if self.system_msg:
-            messages.append({"role": "system", "content": self.system_msg})        
+            messages.append({"role": "system", "content": self.system_msg})
         # add chat history
         if self.remember_chat_history and len(self.chat_history) > 0:
             # take only max_chat_history. NB: each chat has 2 messages.
-            chat_history = self.chat_history[-self.max_chat_history * 2:]
+            chat_history = self.chat_history[-self.max_chat_history * 2 :]
             messages.extend(chat_history)
         # add current question
         messages.append({"role": "user", "content": question})
@@ -634,14 +735,14 @@ class ChatAPI:
 
 
 def main():
-    """ main function for self test """
+    """main function for self test"""
     # ChatAPI
-    chatapi = ChatAPI() # remember_chat_history=False
+    chatapi = ChatAPI()  # remember_chat_history=False
     answer = chatapi.chat("who are you?")
     print(answer)
     # answer = chatapi.chat("how old are you?")
     # print(answer)
 
-    
+
 if __name__ == "__main__":
     main()

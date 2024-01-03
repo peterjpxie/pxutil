@@ -19,15 +19,17 @@ sys     0m0.000s
 """
 import cython
 
+
 def run_loop(loop: cython.int):
     i: cython.int
     s: cython.int
     s = 0
     for i in range(loop):
         s += 1
-    return s 
+    return s
+
 
 def fib(n: cython.int):
-    if n in (1,2):
+    if n in (1, 2):
         return 1
-    return fib(n-1) + fib(n-2)
+    return fib(n - 1) + fib(n - 2)
