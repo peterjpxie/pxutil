@@ -3,7 +3,7 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
-_version = "0.0.22"
+_version = "0.0.23"
 
 with open("README.md") as readme:
     long_description = readme.read()
@@ -30,7 +30,7 @@ setup(
     packages=find_packages(),
     python_requires='>=3.8',
     install_requires=[
-        'requests>=2.1.0',
+        'requests>=2.26.0',
         'cython>=3.0.0',
     ],
     classifiers=[
