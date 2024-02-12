@@ -63,7 +63,7 @@ def chat_main():
 
     register_signal_ctrl_c()
     if args.v4:
-        model = "gpt-4"
+        model = "gpt-4-turbo-preview"
     else:
         model = "gpt-3.5-turbo"
     chat = ChatAPI(model=model)
