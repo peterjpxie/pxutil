@@ -734,6 +734,42 @@ class ChatAPI:
         )  # default if no answer is found in the response
 
 
+def list_module_contents(module_name: str):
+    ''' List contents of a module/package: submodules, classes, and functions.
+    '''
+    import inspect, pkgutil, importlib
+    # add CWD to sys.path if not already in, to support modules in CWD when run anywhere as CLI script px.listmod
+    if os.getcwd() not in sys.path:
+        sys.path.insert(0, os.getcwd())
+    try:
+        # Import the module based on the provided name
+        module = importlib.import_module(module_name)
+    except ModuleNotFoundError:
+        print(f"Module '{module_name}' not found.")
+        return
+
+    print(f"Listing contents of module: {module_name}")
+
+    # Try to list submodules if it is a package
+    print("\nSubmodules:")
+    if hasattr(module, "__path__"):   # Check if module is a package
+        for _, name, ispkg in pkgutil.iter_modules(module.__path__):
+            print(f"- {name} (Package: {ispkg})")
+    else:
+        print(f"No submodules in {module_name}")
+        
+    # List classes defined in the module (excluding imported classes)
+    print("\nClasses:")
+    for name, obj in inspect.getmembers(module, inspect.isclass):
+        if obj.__module__ == module_name:
+            print(f"- {name}")
+
+    # List functions defined in the module (excluding imported functions)
+    print("\nFunctions:")
+    for name, obj in inspect.getmembers(module, inspect.isfunction):
+        if obj.__module__ == module_name:
+            print(f"- {name}")
+
 def main():
     """main function for self test"""
     # ChatAPI

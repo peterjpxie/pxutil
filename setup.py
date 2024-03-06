@@ -3,7 +3,7 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
-_version = "0.0.24"
+_version = "0.0.25"
 
 with open("README.md") as readme:
     long_description = readme.read()
@@ -60,6 +60,7 @@ setup(
                             'px.chat=pxutil.cli:chat_main',
                             'chat=pxutil.cli:chat_main',
                             'px.runc=pxutil.cli:runc_main',
+                            'px.listmod=pxutil.cli:listmod_main',
         ]
     },
 )

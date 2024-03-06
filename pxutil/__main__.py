@@ -7,6 +7,7 @@ https://docs.python.org/3/library/__main__.html
 pip.__main__.py
 """
 import argparse
+import pxutil as px
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

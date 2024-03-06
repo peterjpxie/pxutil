@@ -10,10 +10,10 @@ A sample to learn Python packaging
 ## Install from source
 
 ```
-python setup.py install
-or 
+cd <repo root>
 pip install .
 ```
+~~python setup.py install~~ (deprecated and problematic)
 
 ## Build distributions ( Replaced with Actions / cibuildwheel for multiple python versions and platforms)
 

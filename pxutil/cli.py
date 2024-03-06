@@ -105,10 +105,24 @@ def runc_main():
     bashx(cmd)
 
 
+def listmod_main():
+    """px.listmod CLI script
+
+    List contents of a module/package: submodules, classes, and functions.
+    """
+    ## Parse command line arguments.
+    parser = argparse.ArgumentParser(
+        description="List contents of a module/package: submodules, classes, and functions."
+    )
+    parser.add_argument("module", help="module or package name, e.g., os, os.path, website for website.py")
+    args = parser.parse_args()
+    px.list_module_contents(args.module)
+
+
 if __name__ == "__main__":
     # self test
     # # add parent directory of pxutil package to sys.path so that we can import the package from inside.
     # sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
     # loop_main()
-    chat_main()
+    listmod_main()
