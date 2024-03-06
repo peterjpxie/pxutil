@@ -89,6 +89,7 @@ def to_int(any):
 px.loop -h  # run a command in loop
 px.chat -h  # chat cli based on chatGPT
 px.runc -h  # compile and run single c file with gcc
+px.listmod -h # list content of a module/package: submodules, classes, functions.
 ```
 
 ## Test
