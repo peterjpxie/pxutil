@@ -499,7 +499,7 @@ def is_running_foreground():
     python a.py > a.log : True
     python a.py | tee a.log : True
     nohup python a.py & : False
-    nohup python a.py : False (* special case, this is considered as background as input is ignored and output is redirected)
+    nohup python a.py : False (* special case, this is considered as background as input is ignored and output is redirected. - to reconsider as it is running in foreground.)
 
     ref: https://stackoverflow.com/questions/24861351/how-to-detect-if-python-script-is-being-run-as-a-background-process
     """
@@ -532,9 +532,8 @@ def register_signal_ctrl_c():
         print(" You pressed Ctrl+C! Exiting...")
         sys.exit(1)
 
-    # register only when running in foreground
-    if is_running_foreground():
-        signal.signal(signal.SIGINT, signal_handler)
+    # if is_running_foreground(): - no need. SIGINT won't be captured if running in background.
+    signal.signal(signal.SIGINT, signal_handler)
 
 
 @contextmanager
