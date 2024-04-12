@@ -57,13 +57,13 @@ def chat_main():
         description="ChatGPT cli, type q to exit. Set env variable OPENAI_API_KEY first."
     )
     parser.add_argument(
-        "--v4", action="store_true", help="use GPT-4, default is GPT-3.5 turbo"
+        "--v4", action="store_true", help="use GPT-4-turbo, default is GPT-3.5-turbo"
     )
     args = parser.parse_args()
 
     register_signal_ctrl_c()
     if args.v4:
-        model = "gpt-4-turbo-preview"
+        model = "gpt-4-turbo"
     else:
         model = "gpt-3.5-turbo"
     chat = ChatAPI(model=model)
