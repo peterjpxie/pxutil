@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Some handy utilities from Peter Jiping Xie  
+Some handy utilities from Peter Jiping Xie
 """
 # __all__ = ['bash','trim_docstring','grep']
 
 
+import copy
 import sys
 import re
 import os
@@ -18,47 +19,99 @@ from contextlib import contextmanager
 import requests
 
 ### Settings ###
-# util should only print log in DEBUG level
-LOG_LEVEL = logging.ERROR  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+# util should only print log in ERROR level
+log_level_str = os.getenv(
+    "PX_LOG_LEVEL", "ERROR"
+)  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+LOG_LEVEL = getattr(
+    logging, log_level_str.upper()
+)  # convert to logging level, e.g. logging.DEBUG
 LOG_FOLDER = "logs"
-VALID_HTTP_RESP = (200, 201, 202)
-
+LOG_MODULE_NAME_LEN = 8
 
 # root_path is parent folder of this file
 root_path = path.dirname(path.abspath(__file__))
-# create log folder if not exist
-os.makedirs(path.join(root_path, LOG_FOLDER), exist_ok=True)
-
-# %(levelname)7s to align 7 bytes to right, %(levelname)-7s to left.
-common_formatter = logging.Formatter(
-    "%(asctime)s [%(levelname)-7s][%(module)s][%(lineno)-3d]: %(message)s",
-    datefmt="%Y-%m-%d %I:%M:%S",
-)
+# default to logs folder in the same directory as this file
+log_directory = os.getenv("PX_LOG_DIR", path.join(root_path, LOG_FOLDER))
 
 
-# Note: To create multiple log files, must use different logger name.
-def setup_logger(log_file, level=logging.INFO, name="", formatter=common_formatter):
-    """Function setup as many loggers as you want."""
-    # handler = logging.FileHandler(log_file, mode="w")  # default mode is append
-    # Or use a rotating file handler
-    handler = RotatingFileHandler(log_file, maxBytes=1024000, backupCount=2)
-    handler.setFormatter(formatter)
+class CustomFormatter(logging.Formatter):
+    """Custom formatter to truncate module name to N characters."""
+
+    def format(self, record):
+        record.module = record.module[:LOG_MODULE_NAME_LEN]
+        # Now format the record as usual
+        return super().format(record)
+
+
+def setup_logger(
+    level=logging.INFO,
+    log_file=None,
+    name=__name__,
+    formatter=None,
+    mode="a",
+    rotate=True,
+    maxBytes=1024000,
+    backup_count=5,
+):
+    """Function to setup as many loggers as you want.
+
+    level:          logging level
+    log_file:       path to the log file or None for console logging
+    name:           logger name   NB: To create multiple log files, must use different logger name.
+    formatter:      logging.Formatter object, if None, use default_formatter below
+    mode:           file open mode if rotate is False, 'w' for write, 'a' for append
+    rotate:         whether to rotate log file
+    maxBytes:       maxBytes for rotating file handler
+    backup_count:   backup_count for rotating file handler
+
+    return: logger object
+    """
     logger = logging.getLogger(name)
-    logger.setLevel(level)
-    logger.addHandler(handler)
+    # Check if logger is already configured.
+    # This is avoid duplicate log entries when this function is called multiple times with the same log name.
+    if not logger.hasHandlers():
+        # use stream handler for console logging if log_file is None
+        if log_file is None:
+            handler = logging.StreamHandler()
+        else:
+            # create log directory if not exist
+            os.makedirs(path.dirname(log_file), exist_ok=True)
+
+            # %(levelname)7s to align 7 bytes to right, %(levelname)-7s to left.
+            default_formatter = CustomFormatter(
+                f"[%(asctime)s][%(levelname)7s][%(module){LOG_MODULE_NAME_LEN}s][%(lineno)4d]: %(message)s",
+            )
+            if formatter is None:
+                formatter = default_formatter
+
+            if rotate:
+                handler = RotatingFileHandler(
+                    log_file, maxBytes=maxBytes, backupCount=backup_count
+                )
+            else:
+                handler = logging.FileHandler(log_file, mode=mode)
+
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.setLevel(level)
+        logger.propagate = (
+            False  # Prevents log messages from being duplicated to the root logger
+        )
+
     return logger
 
 
 # default debug logger
-debug_log_filename = path.join(root_path, LOG_FOLDER, "debug.log")
-log = setup_logger(debug_log_filename, LOG_LEVEL, "debug")
+debug_log_filename = path.join(log_directory, "debug.log")
+log = setup_logger(LOG_LEVEL, debug_log_filename, "debug")
 
 # logger for API outputs
 api_formatter = logging.Formatter(
     "%(asctime)s: %(message)s", datefmt="%Y-%m-%d %I:%M:%S"
 )
-api_outputs_filename = path.join(root_path, LOG_FOLDER, "api.log")
-apilog = setup_logger(api_outputs_filename, LOG_LEVEL, "api", formatter=api_formatter)
+api_outputs_filename = path.join(log_directory, "api.log")
+apilog = setup_logger(LOG_LEVEL, api_outputs_filename, "api", formatter=api_formatter)
 
 
 def pretty_json(json_str):
@@ -141,56 +194,117 @@ def pretty_print_response_json(response):
     )
 
 
-def post(url, data=None, headers={}, files=None, verify=True, amend_headers=True):
+def post(
+    url,
+    data=None,
+    headers={},
+    files=None,
+    verify=True,
+    amend_headers=True,
+    content_type=None,
+    **kwargs,
+):
+    """shorthand for request('POST', ...)"""
+    return request(
+        "POST",
+        url,
+        headers=headers,
+        data=data,
+        files=files,
+        verify=verify,
+        amend_headers=amend_headers,
+        content_type=content_type,
+        **kwargs,
+    )
+
+
+def request(
+    method: str,
+    url: str,
+    headers={},
+    data=None,  # NA for GET
+    verify=True,  # default to True to avoid the annoying warning
+    auth=None,  # NA for POST
+    files=None,
+    amend_headers=True,  # NA for GET
+    content_type=None,
+    **kwargs,
+):
     """
-    Common request post function with below features, which you only need to take care of url and body data:
+    Common request function with below features, which can be used for any request methods such as 'POST', GET, OPTIONS, HEAD, POST, PUT, PATCH, or DELETE:
         - append common headers (when amend_headers=True)
         - print request and response in API log file
-        - Take care of request exception and non-20x response codes and return None, so you only need to care normal json response.
-        - arguments are the same as requests.post, except amend_headers.
+        - Take care of request exception and non-2xx response codes and return None, so you only need to care normal json response.
+        - arguments are the same as requests.request, except amend_headers.
 
-    verify: False - Disable SSL certificate verification
+    Arguments
+    ---------
+    amend_headers:  Append common headers, e.g. Content-Type
+    verify:         False - Disable SSL certificate verification, set to False to test dev server with self-signed certificate.
+    session:        Send all requests in one session if True
+    kwargs:         Other arguments requests.request takes.
 
-    Return: response dict or Exception
+    Return: response decoded as dict if possible,
+            or decoded text if not json,
+            or original bytes if decoding fails (not likely),
+            or '' if response has no body,
+            or Exception if any error or non-2xx response code.
     """
+    # append common headers
+    # deep copy headers to avoid using the same headers object (default {}) in different requests
+    headers_new = copy.deepcopy(headers)
+    # set content type to json if not set
+    if content_type is not None:
+        headers_new["Content-Type"] = content_type
+    # check if body is json, then set content type to json
+    elif amend_headers is True:
+        if data:
+            try:
+                json.loads(data)
+            except (json.JSONDecodeError, TypeError):
+                pass
+            else:
+                headers_new["Content-Type"] = "application/json"
 
-    # append common headers if none
-    headers_new = headers
-    if amend_headers is True:
-        headers_new["Content-Type"] = "application/json"
-        # headers_new["Authorization"] = "Bearer %s" % self.token
-
-    # send post request
+    # send request
     try:
-        # timeout in sec to avoid waiting on unreachable server, ref: https://requests.readthedocs.io/en/latest/user/advanced/#timeouts
-        resp = requests.post(
+        resp = requests.request(
+            method,
             url,
-            data=data,
             headers=headers_new,
+            data=data,
             files=files,
             verify=verify,
-            timeout=(3.1, 60),
+            auth=auth,
+            **kwargs,
         )
     except Exception as ex:
-        log.error("requests.post() failed with exception: %s" % ex)
-        return ex
+        return Exception("requests.request() failed with exception: %s" % str(ex))
 
     # pretty request and response into API log file
-    # Note: request print is common as it could be a JSON body or a normal text
     pretty_print_request_json(resp.request)
     pretty_print_response_json(resp)
 
-    if resp.status_code not in VALID_HTTP_RESP:
-        error = "requests.post() failed with response code %s." % resp.status_code
-        log.error(error)
-        return Exception(error)
+    if not (resp.status_code >= 200 and resp.status_code < 300):
+        return Exception(
+            f"API call to {url} failed with response code {resp.status_code}."
+        )
 
-    try:
-        return resp.json()
-    except ValueError:
-        error = "requests.post() failed to parse response body in JSON format."
-        log.error(error)
-        return Exception(error)
+    if resp.content:
+        # return json if possible
+        try:
+            return resp.json()
+        except requests.exceptions.JSONDecodeError:
+            try:
+                # It returns string 'A\x11\x12B' for b'\x41\x11\x12\x42' - ascii binary data with unprintable characters (\x11\x12)
+                #   NB: print('A\x11\x12B') prints 'AB' in terminal as \x11\x12 are unprintable characters, but will write A^Q^RB to file.
+                # It returns unreadable string '��' for b'\xf1\xf2' - non-decodable (>127) utf8 binary data
+                return resp.text
+            except Exception:
+                # most likely won't reach here
+                return resp.content
+    else:  # no content in response body, i.e. content = b''.
+        return ""
 
 
 def bash(cmd, encoding=None):
@@ -734,9 +848,9 @@ class ChatAPI:
 
 
 def list_module_contents(module_name: str):
-    ''' List contents of a module/package: submodules, classes, and functions.
-    '''
+    """List contents of a module/package: submodules, classes, and functions."""
     import inspect, pkgutil, importlib
+
     # add CWD to sys.path if not already in, to support modules in CWD when run anywhere as CLI script px.listmod
     if os.getcwd() not in sys.path:
         sys.path.insert(0, os.getcwd())
@@ -751,12 +865,12 @@ def list_module_contents(module_name: str):
 
     # Try to list submodules if it is a package
     print("\nSubmodules:")
-    if hasattr(module, "__path__"):   # Check if module is a package
+    if hasattr(module, "__path__"):  # Check if module is a package
         for _, name, ispkg in pkgutil.iter_modules(module.__path__):
             print(f"- {name} (Package: {ispkg})")
     else:
         print(f"No submodules in {module_name}")
-        
+
     # List classes defined in the module (excluding imported classes)
     print("\nClasses:")
     for name, obj in inspect.getmembers(module, inspect.isclass):
@@ -769,12 +883,14 @@ def list_module_contents(module_name: str):
         if obj.__module__ == module_name:
             print(f"- {name}")
 
+
 def main():
     """main function for self test"""
     # ChatAPI
     chatapi = ChatAPI()  # remember_chat_history=False
     answer = chatapi.chat("who are you?")
     print(answer)
+    log.info(answer)
     # answer = chatapi.chat("how old are you?")
     # print(answer)
 

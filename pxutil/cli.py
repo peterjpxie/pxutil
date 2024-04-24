@@ -114,7 +114,10 @@ def listmod_main():
     parser = argparse.ArgumentParser(
         description="List contents of a module/package: submodules, classes, and functions."
     )
-    parser.add_argument("module", help="module or package name, e.g., os, os.path, website for website.py")
+    parser.add_argument(
+        "module",
+        help="module or package name, e.g., os, os.path, website for website.py",
+    )
     args = parser.parse_args()
     px.list_module_contents(args.module)
 
