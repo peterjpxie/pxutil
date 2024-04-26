@@ -26,5 +26,6 @@ from .pxutil import (
     import_any,
     ChatAPI,
     list_module_contents,
+    setup_logger,
 )
 from .pxutil_cy import run_loop, fib
