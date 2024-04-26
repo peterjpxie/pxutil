@@ -71,20 +71,19 @@ def setup_logger(
     # Check if logger is already configured.
     # This is avoid duplicate log entries when this function is called multiple times with the same log name.
     if not logger.hasHandlers():
+        # %(levelname)7s to align 7 bytes to right, %(levelname)-7s to left.
+        default_formatter = CustomFormatter(
+            f"[%(asctime)s][%(levelname)7s][%(module){LOG_MODULE_NAME_LEN}s][%(lineno)4d]: %(message)s",
+        )
+        if formatter is None:
+            formatter = default_formatter
+
         # use stream handler for console logging if log_file is None
         if log_file is None:
             handler = logging.StreamHandler()
         else:
             # create log directory if not exist
             os.makedirs(path.dirname(log_file), exist_ok=True)
-
-            # %(levelname)7s to align 7 bytes to right, %(levelname)-7s to left.
-            default_formatter = CustomFormatter(
-                f"[%(asctime)s][%(levelname)7s][%(module){LOG_MODULE_NAME_LEN}s][%(lineno)4d]: %(message)s",
-            )
-            if formatter is None:
-                formatter = default_formatter
-
             if rotate:
                 handler = RotatingFileHandler(
                     log_file, maxBytes=maxBytes, backupCount=backup_count
@@ -887,12 +886,13 @@ def list_module_contents(module_name: str):
 def main():
     """main function for self test"""
     # ChatAPI
-    chatapi = ChatAPI()  # remember_chat_history=False
-    answer = chatapi.chat("who are you?")
-    print(answer)
-    log.info(answer)
-    # answer = chatapi.chat("how old are you?")
+    # chatapi = ChatAPI()  # remember_chat_history=False
+    # answer = chatapi.chat("who are you?")
     # print(answer)
+
+    log = setup_logger(level=logging.DEBUG, log_file="logs/a.log")
+    log.info("Test log")
+    log.warning("Test warning")
 
 
 if __name__ == "__main__":
