@@ -21,6 +21,7 @@ from .pxutil import (
     exit_on_exception,
     register_signal_ctrl_c,
     post,
+    request,
     set_work_path,
     prepend_sys_path,
     import_any,

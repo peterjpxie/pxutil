@@ -56,6 +56,7 @@ print(r.stdout)
 # run a command like bash -x, not capture stdout, stderr
 px.bashx('ls')
 
+# shell alike grep
 px.grep('ab','abc\ndef')
 
 # normalize a path, by default no symlink resolution
@@ -82,6 +83,35 @@ def to_int(any):
     if isinstance(dict):
         return Exception('dict is not supported to convert to int.')
     return int(any)
+
+# bespoke requests, return decoded content or Exception if any error
+# compatible with requests.request parameters
+px.request(
+    method: str,
+    url: str,
+    headers={},
+    data=None,  # NA for GET
+    verify=True,  
+    auth=None,  # NA for POST
+    files=None,
+    amend_headers=True,  # NA for GET
+    content_type=None,
+    **kwargs    # additional requests.request parameters
+)
+NB: This logs request and response to files and log level and directory can be configured via 
+environment variables PX_LOG_LEVEL and PX_LOG_DIR.
+
+# set up loggers
+px.setup_logger(
+    level=logging.INFO,
+    log_file=None,  # None for console output
+    name=__name__,
+    formatter=None,
+    mode="a",
+    rotate=True,
+    maxBytes=1024000,
+    backup_count=5,
+)
 ```
 
 ## Usage - CLI
