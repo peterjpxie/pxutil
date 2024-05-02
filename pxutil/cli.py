@@ -31,14 +31,14 @@ def loop_main():
         "--interval",
         type=float,
         default=1.0,
-        help="interval in seconds between loops",
+        help="interval in seconds between loops (default: 1.0)",
     )
     parser.add_argument(
         "-n",
         "--nloop",
         type=int,
         default=360000,
-        help="number of loops, infinitely by default",
+        help="number of loops (default: infinite)",
     )
     args = parser.parse_args()
 
