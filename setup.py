@@ -3,7 +3,7 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
-_version = "0.0.30"
+_version = "0.0.31"
 
 with open("README.md") as readme:
     long_description = readme.read()
@@ -25,7 +25,7 @@ setup(
     long_description_content_type="text/markdown",  # default is text/x-rst # "text/markdown"
     author="Peter Jiping Xie",
     author_email="peter.jp.xie@gmail.com",
-    url="https://github.com/peterjpxie/pxutil.git",
+    url="https://github.com/peterjpxie/pxutil",
     license="MIT",
     packages=find_packages(),
     python_requires=">=3.8",
