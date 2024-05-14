@@ -57,16 +57,15 @@ def chat_main():
         description="ChatGPT cli, type q to exit. Set env variable OPENAI_API_KEY first."
     )
     parser.add_argument(
-        "--v4", action="store_true", help="use GPT-4-turbo, default is GPT-3.5-turbo"
+        "-m",
+        "--model",
+        default="gpt-3.5-turbo",
+        help="OpenAI chatGPT model, gpt-3.5-turbo (default), gpt-4o etc.",
     )
     args = parser.parse_args()
 
     register_signal_ctrl_c()
-    if args.v4:
-        model = "gpt-4-turbo"
-    else:
-        model = "gpt-3.5-turbo"
-    chat = ChatAPI(model=model)
+    chat = ChatAPI(model=args.model.strip())
     while True:
         question = input("> ")
         if question in ("q", "quit"):
@@ -128,4 +127,4 @@ if __name__ == "__main__":
     # sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
     # loop_main()
-    listmod_main()
+    chat_main()

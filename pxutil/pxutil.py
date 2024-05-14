@@ -490,7 +490,7 @@ def grep(pattern, string=None, filename=None):
         return result
 
 
-def replace_in_file(files, old, new, backup=None):
+def replace_in_file(files, old, new, backup=""):
     """
     Replace in place directly on a file.
 
@@ -830,15 +830,15 @@ class ChatAPI:
         if isinstance(resp, Exception):
             return Exception("Chat API request failed with error: %s." % resp)
 
-        if len(resp["choices"]) >= 1:
-            for choice in resp["choices"]:
-                if choice["index"] == 0 and choice["finish_reason"] in ("stop", None):
-                    answer = choice["message"]["content"]
+        if len(resp["choices"]) >= 1:  # type: ignore
+            for choice in resp["choices"]:  # type: ignore
+                if choice["index"] == 0 and choice["finish_reason"] in ("stop", None):   # type: ignore
+                    answer = choice["message"]["content"]   # type: ignore
                     answer = answer.strip("\n").strip()
                     # record chat history
                     if self.remember_chat_history:
                         self.chat_history.append({"role": "user", "content": question})
-                        self.chat_history.append(choice["message"])
+                        self.chat_history.append(choice["message"])  # type: ignore
                     return answer
 
         return Exception(
