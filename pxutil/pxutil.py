@@ -850,14 +850,14 @@ def list_module_contents(module_name: str):
     """List contents of a module/package: submodules, classes, and functions."""
     import inspect, pkgutil, importlib
 
-    # add CWD to sys.path if not already in, to support modules in CWD when run anywhere as CLI script px.listmod
+    # add CWD to sys.path if not already in, to support modules in CWD when run anywhere as CLI script px.ls.mod
     if os.getcwd() not in sys.path:
         sys.path.insert(0, os.getcwd())
     try:
         # Import the module based on the provided name
         module = importlib.import_module(module_name)
-    except ModuleNotFoundError:
-        print(f"Module '{module_name}' not found.")
+    except ModuleNotFoundError as e:
+        print(f"Module '{module_name}' not found with error: {e}.")
         return
 
     print(f"Listing contents of module: {module_name}")

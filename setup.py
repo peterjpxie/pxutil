@@ -3,11 +3,10 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
-_version = "0.0.31"
+_version = "0.0.32"
 
 with open("README.md") as readme:
     long_description = readme.read()
-    # print(long_description)
 
 # extensions = [
 #     Extension("*", ["*/*.pyx"],
@@ -22,7 +21,7 @@ setup(
     version=_version,
     description="Some handy Python tools",
     long_description=long_description,
-    long_description_content_type="text/markdown",  # default is text/x-rst # "text/markdown"
+    long_description_content_type="text/markdown",  # default is text/x-rst
     author="Peter Jiping Xie",
     author_email="peter.jp.xie@gmail.com",
     url="https://github.com/peterjpxie/pxutil",
@@ -61,7 +60,7 @@ setup(
             "px.chat=pxutil.cli:chat_main",
             "chat=pxutil.cli:chat_main",
             "px.runc=pxutil.cli:runc_main",
-            "px.listmod=pxutil.cli:listmod_main",
+            "px.ls.mod=pxutil.cli:ls_mod_main",
         ]
     },
 )

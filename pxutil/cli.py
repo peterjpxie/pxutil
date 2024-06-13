@@ -104,8 +104,8 @@ def runc_main():
     bashx(cmd)
 
 
-def listmod_main():
-    """px.listmod CLI script
+def ls_mod_main():
+    """px.ls.mod CLI script
 
     List contents of a module/package: submodules, classes, and functions.
     """
@@ -115,9 +115,11 @@ def listmod_main():
     )
     parser.add_argument(
         "module",
-        help="module or package name, e.g., os, os.path, website for website.py",
+        help="module or package name, e.g., os, os.path, website for website.py (.py is auto stripped if provided)",
     )
     args = parser.parse_args()
+    if args.module.endswith(".py"):
+        args.module = args.module[:-3]
     px.list_module_contents(args.module)
 
 
