@@ -54,14 +54,20 @@ def chat_main():
     chat based on chatGPT API
     """
     parser = argparse.ArgumentParser(
-        description="ChatGPT cli, type q to exit. Set env variable OPENAI_API_KEY first."
+        description="ChatGPT cli, type q to exit. Set environment variable OPENAI_API_KEY first."
     )
     parser.add_argument(
         "-m",
         "--model",
-        default="gpt-3.5-turbo",
-        help="OpenAI chatGPT model, gpt-3.5-turbo (default), gpt-4o etc.",
+        default="gpt-4o",
+        help="OpenAI chatGPT model, gpt-4o(default), gpt-3.5-turbo etc.",
     )
+    parser.add_argument(
+        "-q",
+        "--quick",
+        action="store_true",
+        help="Quick mode to get answer, e.g., add 'Short answer pls' to chat.",
+    )    
     args = parser.parse_args()
 
     register_signal_ctrl_c()
@@ -70,6 +76,8 @@ def chat_main():
         question = input("> ")
         if question in ("q", "quit"):
             break
+        if args.quick:
+            question += "\nShort answer pls."
         answer = chat.chat(question)
         print(answer)
 
