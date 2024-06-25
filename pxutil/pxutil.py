@@ -35,6 +35,28 @@ root_path = path.dirname(path.abspath(__file__))
 log_directory = os.getenv("PX_LOG_DIR", path.join(root_path, LOG_FOLDER))
 
 
+def normal_path(path: str, resolve_symlink=False):
+    """return a normalized path
+
+    resolve_symlink: resolve symbolic link to the actual path
+
+    calls os.path.x:
+    expanduser: ~/a.txt => /home/user/a.txt
+    expandvars: '$HOME/mydir' => /home/user/mydir
+    normpath: /usr/local//../bin/ => /usr/bin
+    realpath: a.txt => /home/user/project/a.txt (full path);  /usr/local/bin/python3 (symlink) => /usr/bin/python3.8
+    abspath: a.txt => /home/user/project/a.txt (full path); /usr/local/bin/python3 (symlink) => /usr/local/bin/python3;
+            /usr/local//../bin/ => /usr/bin
+
+    Note: abspath does half realpath + normpath.
+    """
+    from os.path import expanduser, expandvars, normpath, realpath, abspath
+
+    if resolve_symlink:
+        return realpath(normpath(expandvars(expanduser(path))))
+    else:
+        return abspath(expandvars(expanduser(path)))
+
 class CustomFormatter(logging.Formatter):
     """Custom formatter to truncate module name to N characters."""
 
@@ -57,7 +79,7 @@ def setup_logger(
     """Function to setup as many loggers as you want.
 
     level:          logging level
-    log_file:       path to the log file or None for console logging
+    log_file:       path to the log file (path will be auto normalized) or None for console logging
     name:           logger name   NB: To create multiple log files, must use different logger name.
     formatter:      logging.Formatter object, if None, use default_formatter below
     mode:           file open mode if rotate is False, 'w' for write, 'a' for append
@@ -82,6 +104,8 @@ def setup_logger(
         if log_file is None:
             handler = logging.StreamHandler()
         else:
+            # normalize log_file path
+            log_file = normal_path(log_file)
             # create log directory if not exist
             os.makedirs(path.dirname(log_file), exist_ok=True)
             if rotate:
@@ -100,17 +124,15 @@ def setup_logger(
 
     return logger
 
-
-# default debug logger
-debug_log_filename = path.join(log_directory, "debug.log")
-log = setup_logger(LOG_LEVEL, debug_log_filename, "debug")
-
-# logger for API outputs
-api_formatter = logging.Formatter(
-    "%(asctime)s: %(message)s", datefmt="%Y-%m-%d %I:%M:%S"
-)
-api_outputs_filename = path.join(log_directory, "api.log")
-apilog = setup_logger(LOG_LEVEL, api_outputs_filename, "api", formatter=api_formatter)
+def _setup_api_logger():
+    """setup api logger in append mode"""
+    # logger for API outputs
+    api_formatter = logging.Formatter(
+        "%(asctime)s: %(message)s", datefmt="%Y-%m-%d %I:%M:%S"
+    )
+    api_outputs_filename = path.join(log_directory, "px_api.log")
+    logger = setup_logger(LOG_LEVEL, api_outputs_filename, name="api", mode='a', formatter=api_formatter)
+    return logger
 
 
 def pretty_json(json_str):
@@ -158,7 +180,9 @@ def pretty_print_request_json(request):
             # else unchanged as bytes
             # print(req_body)
 
-    apilog.debug(
+    api_logger = _setup_api_logger()
+
+    api_logger.debug(
         "{}\n{}\n\n{}\n\n{}\n".format(
             "-----------Request----------->",
             request.method + " " + request.url,
@@ -183,7 +207,9 @@ def pretty_print_response_json(response):
     except ValueError:
         resp_body = response.text
 
-    apilog.debug(
+    api_logger = _setup_api_logger()
+
+    api_logger.debug(
         "{}\n{}\n\n{}\n\n{}\n".format(
             "<-----------Response-----------",
             "Status code:" + str(response.status_code),
@@ -238,9 +264,16 @@ def request(
 
     Arguments
     ---------
-    amend_headers:  Append common headers, e.g. Content-Type
-    verify:         False - Disable SSL certificate verification, set to False to test dev server with self-signed certificate.
+    method:         Same as requests.request
+    url:            Same as requests.request
+    headers:        Same as requests.request
+    data:           Same as requests.request
+    verify:         Same as requests.request. False - Disable SSL certificate verification, set to False to test dev server with self-signed certificate.
+    auth:           Same as requests.request
+    files:          Same as requests.request
+    amend_headers:  Append common headers, e.g. set Content-Type to "application/json" if body is json
     session:        Send all requests in one session if True
+    content_type:   Set header Content-Type if provided
     kwargs:         Other arguments requests.request takes.
 
     Return: response decoded as dict if possible,
@@ -580,27 +613,6 @@ def exit_on_exception(func):
     return wrapper
 
 
-def normal_path(path: str, resolve_symlink=False):
-    """return a normalized path
-
-    resolve_symlink: resolve symbolic link to the actual path
-
-    calls os.path.x:
-    expanduser: ~/a.txt => /home/user/a.txt
-    expandvars: '$HOME/mydir' => /home/user/mydir
-    normpath: /usr/local//../bin/ => /usr/bin
-    realpath: a.txt => /home/user/project/a.txt (full path);  /usr/local/bin/python3 (symlink) => /usr/bin/python3.8
-    abspath: a.txt => /home/user/project/a.txt (full path); /usr/local/bin/python3 (symlink) => /usr/local/bin/python3;
-            /usr/local//../bin/ => /usr/bin
-
-    Note: abspath does half realpath + normpath.
-    """
-    from os.path import expanduser, expandvars, normpath, realpath, abspath
-
-    if resolve_symlink:
-        return realpath(normpath(expandvars(expanduser(path))))
-    else:
-        return abspath(expandvars(expanduser(path)))
 
 
 def is_running_foreground():
@@ -885,14 +897,14 @@ def list_module_contents(module_name: str):
 
 def main():
     """main function for self test"""
-    # ChatAPI
-    # chatapi = ChatAPI()  # remember_chat_history=False
-    # answer = chatapi.chat("who are you?")
-    # print(answer)
+    ChatAPI
+    chatapi = ChatAPI()  # remember_chat_history=False
+    answer = chatapi.chat("who are you?")
+    print(answer)
 
-    log = setup_logger(level=logging.DEBUG, log_file="logs/a.log")
-    log.info("Test log")
-    log.warning("Test warning")
+    # log = setup_logger(level=logging.DEBUG, log_file="logs/a.log")
+    # log.info("Test log")
+    # log.warning("Test warning")
 
 
 if __name__ == "__main__":

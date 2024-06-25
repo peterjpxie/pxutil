@@ -98,8 +98,8 @@ px.request(
     content_type=None,
     **kwargs    # additional requests.request parameters
 )
-NB: This logs request and response to files and log level and directory can be configured via 
-environment variables PX_LOG_LEVEL and PX_LOG_DIR.
+NB: This logs requests and responses to files if log level is DEBUG, and log level and directory 
+can be configured via environment variable PX_LOG_LEVEL (DEBUG) and PX_LOG_DIR.
 
 # set up loggers
 px.setup_logger(
