@@ -7,12 +7,12 @@ Refer: https://python-packaging.readthedocs.io/en/latest/command-line-scripts.ht
 
 import os
 import sys
-import logging
 from time import sleep
 import argparse
 import shutil
 
-# add .pxutil functions / classes to pxutil/__init__.py so that it can be imported as `from pxutil import <func>` both outside and inside pxutil package
+# add .pxutil functions and classes to pxutil/__init__.py so that 
+# it can be imported as `from pxutil import <func>` both outside and inside pxutil package
 from pxutil import bashx, register_signal_ctrl_c, ChatAPI
 import pxutil as px
 

@@ -246,13 +246,15 @@ def post(
 def request(
     method: str,
     url: str,
-    headers={},
+    *,  # keyword only argument after this 
     data=None,  # NA for GET
-    verify=True,  # default to True to avoid the annoying warning
-    auth=None,  # NA for POST
+    headers={},
     files=None,
+    auth=None,  # NA for POST
+    verify=True,  # default to True to avoid the annoying warning
     amend_headers=True,  # NA for GET
     content_type=None,
+    session=None,
     **kwargs,
 ):
     """
@@ -271,9 +273,9 @@ def request(
     verify:         Same as requests.request. False - Disable SSL certificate verification, set to False to test dev server with self-signed certificate.
     auth:           Same as requests.request
     files:          Same as requests.request
-    amend_headers:  Append common headers, e.g. set Content-Type to "application/json" if body is json
-    session:        Send all requests in one session if True
-    content_type:   Set header Content-Type if provided
+    amend_headers:  boolean, Append common headers, e.g. set Content-Type to "application/json" if body is json
+    content_type:   str, Set header Content-Type if provided
+    session:        requests.Session() instance, send requests in provided session if provided
     kwargs:         Other arguments requests.request takes.
 
     Return: response decoded as dict if possible,
@@ -300,16 +302,29 @@ def request(
 
     # send request
     try:
-        resp = requests.request(
-            method,
-            url,
-            headers=headers_new,
-            data=data,
-            files=files,
-            verify=verify,
-            auth=auth,
-            **kwargs,
-        )
+        if session:
+            assert isinstance(session, requests.Session), 'session is not requests.Session() instance'
+            resp = session.request(
+                method,
+                url,
+                headers=headers_new,
+                data=data,
+                files=files,
+                verify=verify,
+                auth=auth,
+                **kwargs,
+            )
+        else:
+            resp = requests.request(
+                method,
+                url,
+                headers=headers_new,
+                data=data,
+                files=files,
+                verify=verify,
+                auth=auth,
+                **kwargs,
+            )
     except Exception as ex:
         return Exception("requests.request() failed with exception: %s" % str(ex))
 
