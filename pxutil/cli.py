@@ -11,7 +11,7 @@ from time import sleep
 import argparse
 import shutil
 
-# add .pxutil functions and classes to pxutil/__init__.py so that 
+# add .pxutil functions and classes to pxutil/__init__.py so that
 # it can be imported as `from pxutil import <func>` both outside and inside pxutil package
 from pxutil import bashx, register_signal_ctrl_c, ChatAPI
 import pxutil as px
@@ -67,7 +67,7 @@ def chat_main():
         "--quick",
         action="store_true",
         help="Quick mode to get answer, e.g., add 'Short answer pls' to chat.",
-    )    
+    )
     args = parser.parse_args()
 
     register_signal_ctrl_c()

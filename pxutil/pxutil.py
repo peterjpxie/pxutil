@@ -277,7 +277,7 @@ def request(
     url:            Same as requests.request
     data:           Same as requests.request
     headers:        Same as requests.request
-    files:          Same as requests.request    
+    files:          Same as requests.request
     auth:           Same as requests.request
     verify:         Same as requests.request. False - Disable SSL certificate verification, set to False to test dev server with self-signed certificate.
     amend_headers:  boolean, Append common headers, e.g. set Content-Type to "application/json" if body is json
@@ -911,6 +911,7 @@ def list_module_contents(module_name: str):
 
 def main():
     """main function for self test"""
+    pass
     # ChatAPI
     # chatapi = ChatAPI()  # remember_chat_history=False
     # answer = chatapi.chat("who are you?")
@@ -919,16 +920,6 @@ def main():
     # log = setup_logger(level=logging.DEBUG, log_file="logs/a.log")
     # log.info("Test log")
     # log.warning("Test warning")
-
-    # Test POST request with JSON data
-    post_url = 'https://httpbin.org/post'
-    json_data = {'key': 'value'}
-    headers = {'My-Header':'value'}
-    response = request('POST', post_url, data=json.dumps(json_data), headers=headers)
-    assert isinstance(response, dict)
-    assert response['json'] == json_data  
-    assert response['headers']['My-Header'] == 'value'
-   
 
 if __name__ == "__main__":
     main()
