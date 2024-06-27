@@ -94,16 +94,7 @@ can be configured via environment variable PX_LOG_LEVEL (DEBUG) and PX_LOG_DIR.
 px.post()
 
 # set up loggers
-px.setup_logger(
-    level=logging.INFO,
-    log_file=None,  # None for console output
-    name=__name__,
-    formatter=None,
-    mode="a",
-    rotate=True,
-    maxBytes=1024000,
-    backup_count=5,
-)
+px.setup_logger()
 ```
 
 ## Usage - CLI
