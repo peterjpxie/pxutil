@@ -19,6 +19,7 @@ import os
 import sys
 import pytest
 import os.path as ospath
+import json
 
 
 def test_bash():
@@ -202,3 +203,33 @@ def test_import_any():
         # cleanup temp_file
         os.remove(temp_file)
         assert tempfile.a == 1
+
+def test_request():
+    """test request"""
+    from pxutil import request
+    # Test GET request
+    get_url = 'https://httpbin.org/get'
+    response = request('GET', get_url)
+    assert isinstance(response, dict)
+    assert response['url'] == get_url
+
+    # Test POST request with JSON data and headers
+    post_url = 'https://httpbin.org/post'
+    json_data = {'key': 'value'}
+    headers = {'My-Header':'value'}
+    response = request('POST', post_url, data=json.dumps(json_data), headers=headers)
+    assert isinstance(response, dict)
+    assert response['json'] == json_data  
+    assert response['headers']['My-Header'] == 'value'
+
+
+def test_post():
+    '''test post, a shorthand of request'''
+    from pxutil import post
+    # Test POST request with JSON data and headers
+    post_url = 'https://httpbin.org/post'
+    json_data = {'key': 'value'}
+    headers = {'My-Header':'value'}    
+    response = post(post_url, data=json.dumps(json_data), headers=headers)
+    assert isinstance(response, dict)
+    assert response['headers']['My-Header'] == 'value'     

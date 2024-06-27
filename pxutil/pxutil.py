@@ -57,6 +57,7 @@ def normal_path(path: str, resolve_symlink=False):
     else:
         return abspath(expandvars(expanduser(path)))
 
+
 class CustomFormatter(logging.Formatter):
     """Custom formatter to truncate module name to N characters."""
 
@@ -124,6 +125,7 @@ def setup_logger(
 
     return logger
 
+
 def _setup_api_logger():
     """setup api logger in append mode"""
     # logger for API outputs
@@ -131,7 +133,9 @@ def _setup_api_logger():
         "%(asctime)s: %(message)s", datefmt="%Y-%m-%d %I:%M:%S"
     )
     api_outputs_filename = path.join(log_directory, "px_api.log")
-    logger = setup_logger(LOG_LEVEL, api_outputs_filename, name="api", mode='a', formatter=api_formatter)
+    logger = setup_logger(
+        LOG_LEVEL, api_outputs_filename, name="api", mode="a", formatter=api_formatter
+    )
     return logger
 
 
@@ -221,24 +225,27 @@ def pretty_print_response_json(response):
 
 def post(
     url,
+    *,
     data=None,
     headers={},
     files=None,
     verify=True,
     amend_headers=True,
     content_type=None,
+    session=None,
     **kwargs,
 ):
     """shorthand for request('POST', ...)"""
     return request(
         "POST",
         url,
-        headers=headers,
         data=data,
+        headers=headers,
         files=files,
         verify=verify,
         amend_headers=amend_headers,
         content_type=content_type,
+        session=session,
         **kwargs,
     )
 
@@ -246,7 +253,7 @@ def post(
 def request(
     method: str,
     url: str,
-    *,  # keyword only argument after this 
+    *,  # keyword only argument after this
     data=None,  # NA for GET
     headers={},
     files=None,
@@ -261,21 +268,21 @@ def request(
     Common request function with below features, which can be used for any request methods such as 'POST', GET, OPTIONS, HEAD, POST, PUT, PATCH, or DELETE:
         - append common headers (when amend_headers=True)
         - print request and response in API log file
-        - Take care of request exception and non-2xx response codes and return None, so you only need to care normal json response.
+        - Take care of request exception and error response codes (>=400) and return None, so you only need to care normal json response.
         - arguments are the same as requests.request, except amend_headers.
 
     Arguments
     ---------
     method:         Same as requests.request
     url:            Same as requests.request
-    headers:        Same as requests.request
     data:           Same as requests.request
-    verify:         Same as requests.request. False - Disable SSL certificate verification, set to False to test dev server with self-signed certificate.
+    headers:        Same as requests.request
+    files:          Same as requests.request    
     auth:           Same as requests.request
-    files:          Same as requests.request
+    verify:         Same as requests.request. False - Disable SSL certificate verification, set to False to test dev server with self-signed certificate.
     amend_headers:  boolean, Append common headers, e.g. set Content-Type to "application/json" if body is json
-    content_type:   str, Set header Content-Type if provided
-    session:        requests.Session() instance, send requests in provided session if provided
+    content_type:   str, set header Content-Type if provided
+    session:        requests.Session() instance, send requests in the provided session if set, and will maintain session cookies.
     kwargs:         Other arguments requests.request takes.
 
     Return: response decoded as dict if possible,
@@ -303,36 +310,30 @@ def request(
     # send request
     try:
         if session:
-            assert isinstance(session, requests.Session), 'session is not requests.Session() instance'
-            resp = session.request(
-                method,
-                url,
-                headers=headers_new,
-                data=data,
-                files=files,
-                verify=verify,
-                auth=auth,
-                **kwargs,
-            )
+            assert isinstance(
+                session, requests.Session
+            ), "Provided session is not requests.Session() instance"
         else:
-            resp = requests.request(
-                method,
-                url,
-                headers=headers_new,
-                data=data,
-                files=files,
-                verify=verify,
-                auth=auth,
-                **kwargs,
-            )
+            # create a new session
+            session = requests.Session()
+        resp = session.request(
+            method,
+            url,
+            data=data,
+            headers=headers_new,
+            files=files,
+            auth=auth,
+            verify=verify,
+            **kwargs,
+        )
     except Exception as ex:
-        return Exception("requests.request() failed with exception: %s" % str(ex))
+        return Exception("request() failed with exception: %s" % str(ex))
 
     # pretty request and response into API log file
     pretty_print_request_json(resp.request)
     pretty_print_response_json(resp)
 
-    if not (resp.status_code >= 200 and resp.status_code < 300):
+    if resp.status_code >= 400:
         return Exception(
             f"API call to {url} failed with response code {resp.status_code}."
         )
@@ -628,8 +629,6 @@ def exit_on_exception(func):
     return wrapper
 
 
-
-
 def is_running_foreground():
     """Check if current script is running in foreground
 
@@ -859,8 +858,8 @@ class ChatAPI:
 
         if len(resp["choices"]) >= 1:  # type: ignore
             for choice in resp["choices"]:  # type: ignore
-                if choice["index"] == 0 and choice["finish_reason"] in ("stop", None):   # type: ignore
-                    answer = choice["message"]["content"]   # type: ignore
+                if choice["index"] == 0 and choice["finish_reason"] in ("stop", None):  # type: ignore
+                    answer = choice["message"]["content"]  # type: ignore
                     answer = answer.strip("\n").strip()
                     # record chat history
                     if self.remember_chat_history:
@@ -912,15 +911,24 @@ def list_module_contents(module_name: str):
 
 def main():
     """main function for self test"""
-    ChatAPI
-    chatapi = ChatAPI()  # remember_chat_history=False
-    answer = chatapi.chat("who are you?")
-    print(answer)
+    # ChatAPI
+    # chatapi = ChatAPI()  # remember_chat_history=False
+    # answer = chatapi.chat("who are you?")
+    # print(answer)
 
     # log = setup_logger(level=logging.DEBUG, log_file="logs/a.log")
     # log.info("Test log")
     # log.warning("Test warning")
 
+    # Test POST request with JSON data
+    post_url = 'https://httpbin.org/post'
+    json_data = {'key': 'value'}
+    headers = {'My-Header':'value'}
+    response = request('POST', post_url, data=json.dumps(json_data), headers=headers)
+    assert isinstance(response, dict)
+    assert response['json'] == json_data  
+    assert response['headers']['My-Header'] == 'value'
+   
 
 if __name__ == "__main__":
     main()
