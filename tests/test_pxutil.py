@@ -18,7 +18,7 @@ from pxutil import (
 import os
 import sys
 import pytest
-import os.path as ospath
+import os.path as osp
 import json
 
 
@@ -196,7 +196,7 @@ def test_import_any():
     # test with unique temp dir
     with tempfile.TemporaryDirectory() as temp_dir:
         # create a temp file
-        temp_file = ospath.join(temp_dir, "temp_file.py")
+        temp_file = osp.join(temp_dir, "temp_file.py")
         with open(temp_file, "w") as f:
             f.write("a = 1")
         tempfile = import_any(temp_file)

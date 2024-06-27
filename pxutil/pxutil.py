@@ -13,7 +13,7 @@ import json
 import logging
 from logging.handlers import RotatingFileHandler
 from os import path
-import os.path as ospath
+import os.path as osp
 from contextlib import contextmanager
 
 import requests
@@ -738,11 +738,11 @@ def import_any(path: str):
     from importlib import import_module
 
     path = normal_path(path)
-    if not ospath.isfile(path):
+    if not osp.isfile(path):
         raise FileNotFoundError(f"Failed to import as file {path} does not exist.")
 
-    with prepend_sys_path(ospath.dirname(path)):
-        module_name = ospath.splitext(ospath.basename(path))[0]
+    with prepend_sys_path(osp.dirname(path)):
+        module_name = osp.splitext(osp.basename(path))[0]
         module = import_module(module_name)
         return module
 
