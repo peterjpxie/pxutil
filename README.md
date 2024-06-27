@@ -84,22 +84,14 @@ def to_int(any):
         return Exception('dict is not supported to convert to int.')
     return int(any)
 
-# bespoke requests, return decoded content or Exception if any error
+# bespoke request, return decoded content or Exception if any error
 # compatible with requests.request parameters
-px.request(
-    method: str,
-    url: str,
-    headers={},
-    data=None,  # NA for GET
-    verify=True,  
-    auth=None,  # NA for POST
-    files=None,
-    amend_headers=True,  # NA for GET
-    content_type=None,
-    **kwargs    # additional requests.request parameters
-)
+px.request()
 NB: This logs requests and responses to files if log level is DEBUG, and log level and directory 
 can be configured via environment variable PX_LOG_LEVEL (DEBUG) and PX_LOG_DIR.
+
+# shorthand of px.request('POST',...)
+px.post()
 
 # set up loggers
 px.setup_logger(
@@ -116,11 +108,11 @@ px.setup_logger(
 
 ## Usage - CLI
 ```
-px.loop -h  # run a command in loop
-px.chat -h  # chat cli based on chatGPT
-px.runc -h  # compile and run single c file with gcc
-px.listmod -h # list content of a module/package: submodules, classes, functions.
-```
+px.loop -h      # run a command in loop
+px.chat -h      # chat cli based on chatGPT
+px.runc -h      # compile and run single c file with gcc
+px.ls.mod -h    # list content of a module/package: submodules, classes, functions.
+``` 
 
 ## Test
 ```
