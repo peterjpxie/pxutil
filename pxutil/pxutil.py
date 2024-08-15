@@ -355,13 +355,14 @@ def request(
         return ""
 
 
-def bash(cmd, encoding=None):
+def bash(cmd:str, encoding=None):
     """
     subprocess.run with intuitive options to execute system commands just like shell bash command.
 
     Inspired by https://pypi.org/project/bash/.
 
-    cmd: string
+    cmd: command in a string, e.g. 'ls -l'
+    encoding: encoding to decode output, e.g. 'utf-8'. Auto detected if None.
     return: CompletedProcess object in text (decode as locale encoding), with attributes stdout, stderr and returncode.
 
     Usage example:
@@ -374,16 +375,8 @@ def bash(cmd, encoding=None):
     import sys
     import locale
 
-    if sys.version_info >= (
-        3,
-        7,
-    ):  # version_info is actually a tuple, so compare with a tuple
-        if encoding:
-            return run(
-                cmd, shell=True, capture_output=True, text=True, encoding=encoding
-            )
-        else:
-            return run(cmd, shell=True, capture_output=True, text=True)
+    if sys.version_info >= (3,7): 
+        return run(cmd, shell=True, capture_output=True, text=True, encoding=encoding)
 
     elif sys.version_info >= (3, 5):
         if encoding is None:
@@ -920,6 +913,7 @@ def main():
     # log = setup_logger(level=logging.DEBUG, log_file="logs/a.log")
     # log.info("Test log")
     # log.warning("Test warning")
+
 
 if __name__ == "__main__":
     main()
