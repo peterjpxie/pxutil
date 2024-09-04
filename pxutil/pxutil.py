@@ -130,7 +130,7 @@ def _setup_api_logger():
     """setup api logger in append mode"""
     # logger for API outputs
     api_formatter = logging.Formatter(
-        "%(asctime)s: %(message)s", datefmt="%Y-%m-%d %I:%M:%S"
+        "%(asctime)s: %(message)s"
     )
     api_outputs_filename = path.join(log_directory, "px_api.log")
     logger = setup_logger(
