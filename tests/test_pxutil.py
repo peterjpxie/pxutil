@@ -257,7 +257,9 @@ def test_post():
 
 
 def test_setup_logger():
+    from pxutil import setup_logger
     import logging
+
     # default logger format, stdout
     logger1 = setup_logger(logging.INFO)
     logger1.info('todo')
