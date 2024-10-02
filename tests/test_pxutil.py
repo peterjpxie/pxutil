@@ -254,3 +254,26 @@ def test_post():
     response = post(post_url, data=json.dumps(json_data), headers=headers)
     assert isinstance(response, dict)
     assert response["headers"]["My-Header"] == "value"
+
+
+def test_setup_logger():
+    import logging
+    # default logger format, stdout
+    logger1 = setup_logger(logging.INFO)
+    logger1.info()
+    # default logger format, file
+
+    # simple time only format, stdout 
+
+
+def setup_logger(
+    level=logging.INFO,
+    log_file=None,
+    name=__name__,
+    formatter=None,
+    formatter_simple_time_only=False,
+    mode="a",
+    rotate=True,
+    maxBytes=1024000,
+    backup_count=5,
+):

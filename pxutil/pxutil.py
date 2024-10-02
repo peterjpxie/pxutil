@@ -72,6 +72,7 @@ def setup_logger(
     log_file=None,
     name=__name__,
     formatter=None,
+    formatter_simple_time_only=False,
     mode="a",
     rotate=True,
     maxBytes=1024000,
@@ -82,8 +83,9 @@ def setup_logger(
     level:          logging level
     log_file:       path to the log file (path will be auto normalized) or None for console logging
     name:           logger name   NB: To create multiple log files, must use different logger name.
-    formatter:      logging.Formatter object, if None, use default_formatter below
-    mode:           file open mode if rotate is False, 'w' for write, 'a' for append
+    formatter:      logging.Formatter object, if None, consider formatter_simple_time_only if true or use default_formatter below.
+    formatter_simple_time_only:  Boolean, if true, use this format: logging.Formatter("%(asctime)s: %(message)s").
+    mode:           file open mode if rotate is False, 'w' for write, 'a' for append (default)
     rotate:         whether to rotate log file
     maxBytes:       maxBytes for rotating file handler
     backup_count:   backup_count for rotating file handler
@@ -94,11 +96,11 @@ def setup_logger(
     # Check if logger is already configured.
     # This is avoid duplicate log entries when this function is called multiple times with the same log name.
     if not logger.hasHandlers():
-        # %(levelname)7s to align 7 bytes to right, %(levelname)-7s to left.
-        default_formatter = CustomFormatter(
-            f"[%(asctime)s][%(levelname)7s][%(module){LOG_MODULE_NAME_LEN}s][%(lineno)4d]: %(message)s",
-        )
         if formatter is None:
+            # %(levelname)7s to align 7 bytes to right, %(levelname)-7s to left.
+            default_formatter = CustomFormatter(
+                f"[%(asctime)s][%(levelname)7s][%(module){LOG_MODULE_NAME_LEN}s][%(lineno)4d]: %(message)s",
+            )            
             formatter = default_formatter
 
         # use stream handler for console logging if log_file is None
@@ -119,9 +121,8 @@ def setup_logger(
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         logger.setLevel(level)
-        logger.propagate = (
-            False  # Prevents log messages from being duplicated to the root logger
-        )
+        # Prevents log messages from being duplicated to the root logger
+        logger.propagate = False
 
     return logger
 
@@ -129,12 +130,10 @@ def setup_logger(
 def _setup_api_logger():
     """setup api logger in append mode"""
     # logger for API outputs
-    api_formatter = logging.Formatter(
-        "%(asctime)s: %(message)s"
-    )
+    # api_formatter = logging.Formatter("%(asctime)s: %(message)s")
     api_outputs_filename = path.join(log_directory, "px_api.log")
     logger = setup_logger(
-        LOG_LEVEL, api_outputs_filename, name="api", mode="a", formatter=api_formatter
+        LOG_LEVEL, api_outputs_filename, name="api", mode="a", formatter_simple_time_only=True, # formatter=api_formatter
     )
     return logger
 
