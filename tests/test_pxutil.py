@@ -260,20 +260,8 @@ def test_setup_logger():
     import logging
     # default logger format, stdout
     logger1 = setup_logger(logging.INFO)
-    logger1.info()
+    logger1.info('todo')
     # default logger format, file
 
     # simple time only format, stdout 
 
-
-def setup_logger(
-    level=logging.INFO,
-    log_file=None,
-    name=__name__,
-    formatter=None,
-    formatter_simple_time_only=False,
-    mode="a",
-    rotate=True,
-    maxBytes=1024000,
-    backup_count=5,
-):
