@@ -256,14 +256,22 @@ def test_post():
     assert response["headers"]["My-Header"] == "value"
 
 
-def test_setup_logger():
+def test_setup_logger(caplog):
+    """note: caplog is a built-in pytest fixture designed for capturing log records"""
     from pxutil import setup_logger
     import logging
 
-    # default logger format, stdout
+    ## default logger format, stdout
     logger1 = setup_logger(logging.INFO)
-    logger1.info('todo')
-    # default logger format, file
+    logger1.info('info log')
 
-    # simple time only format, stdout 
+    # Use caplog to capture log outputs
+    with caplog.at_level(logging.INFO):
+        logger1.info('info log')
 
+    # Check if 'info log' is in the captured output
+    assert any('info log' in message for message in caplog.text.splitlines()), "The log does not contain 'info log'"
+
+    ## default logger format, file
+
+    ## simple time only format, stdout 
