@@ -285,6 +285,9 @@ def test_setup_logger():
         assert "info log" in content, "The log does not contain 'info log'"
     
     # cleanup
+    for handler in logger2.handlers:
+        handler.close()
+        logger2.removeHandler(handler)
     # avoid file not closed quick enough
     time.sleep(0.01)
     os.remove(log_file)
@@ -305,6 +308,9 @@ def test_setup_logger():
         assert "INFO" not in content, "The log does not contain log level 'INFO'"
 
     # cleanup
+    for handler in logger3.handlers:
+        handler.close()
+        logger3.removeHandler(handler)    
     # avoid file not closed quick enough
     time.sleep(0.01)
     os.remove(log_file)
