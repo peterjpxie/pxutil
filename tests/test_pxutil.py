@@ -21,6 +21,7 @@ import sys
 import pytest
 import os.path as osp
 import json
+import time
 
 
 def test_bash():
@@ -282,8 +283,10 @@ def test_setup_logger():
     with open(log_file) as f:
         content = f.read()
         assert "info log" in content, "The log does not contain 'info log'"
-
+    
     # cleanup
+    # avoid file not closed quick enough
+    time.sleep(0.01)
     os.remove(log_file)
 
     ## simple time only format, stdout
@@ -302,4 +305,6 @@ def test_setup_logger():
         assert "INFO" not in content, "The log does not contain log level 'INFO'"
 
     # cleanup
+    # avoid file not closed quick enough
+    time.sleep(0.01)
     os.remove(log_file)
