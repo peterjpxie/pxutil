@@ -15,24 +15,23 @@ from logging.handlers import RotatingFileHandler
 from os import path
 import os.path as osp
 from contextlib import contextmanager
+import pdb
 
 import requests
 
 ### Settings ###
-# util should only print log in ERROR level
-log_level_str = os.getenv(
-    "PX_LOG_LEVEL", "ERROR"
-)  # DEBUG, INFO, WARNING, ERROR, CRITICAL
-LOG_LEVEL = getattr(
-    logging, log_level_str.upper()
-)  # convert to logging level, e.g. logging.DEBUG
-LOG_FOLDER = "logs"
+## log level is not used.
+# log_level_str = os.getenv(
+#     "PX_LOG_LEVEL", "ERROR"
+# )  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+# LOG_LEVEL = getattr(
+#     logging, log_level_str.upper()
+# )  # convert to logging level, e.g. logging.DEBUG
+
 LOG_MODULE_NAME_LEN = 8
 
 # root_path is parent folder of this file
 root_path = path.dirname(path.abspath(__file__))
-# default to logs folder in the same directory as this file
-log_directory = os.getenv("PX_LOG_DIR", path.join(root_path, LOG_FOLDER))
 
 
 def normal_path(path: str, resolve_symlink=False):
@@ -72,6 +71,7 @@ def setup_logger(
     log_file=None,
     name=__name__,
     formatter=None,
+    formatter_simple_time_only=False,
     mode="a",
     rotate=True,
     maxBytes=1024000,
@@ -82,8 +82,9 @@ def setup_logger(
     level:          logging level
     log_file:       path to the log file (path will be auto normalized) or None for console logging
     name:           logger name   NB: To create multiple log files, must use different logger name.
-    formatter:      logging.Formatter object, if None, use default_formatter below
-    mode:           file open mode if rotate is False, 'w' for write, 'a' for append
+    formatter:      logging.Formatter object, if None, consider formatter_simple_time_only if true or use default_formatter below.
+    formatter_simple_time_only:  Boolean, if true and formatter is None, use this format: logging.Formatter("%(asctime)s: %(message)s").
+    mode:           file open mode if rotate is False, 'w' for write, 'a' for append (default)
     rotate:         whether to rotate log file
     maxBytes:       maxBytes for rotating file handler
     backup_count:   backup_count for rotating file handler
@@ -91,22 +92,40 @@ def setup_logger(
     return: logger object
     """
     logger = logging.getLogger(name)
-    # Check if logger is already configured.
+    # Check if logger is already configured with the name.
     # This is avoid duplicate log entries when this function is called multiple times with the same log name.
-    if not logger.hasHandlers():
-        # %(levelname)7s to align 7 bytes to right, %(levelname)-7s to left.
-        default_formatter = CustomFormatter(
-            f"[%(asctime)s][%(levelname)7s][%(module){LOG_MODULE_NAME_LEN}s][%(lineno)4d]: %(message)s",
-        )
+    # Note:
+    #   Normally logger.hasHandlers() is False if it is called the first time.
+    #   But it could True and logger.handlers == [], if root logger `logging.getLogger()` is called once somewhere else,
+    #   e.g., when you run pytest to test this function, pytest seems to call logging.getLogger() first.
+    #   hasHandlers() check its parent's handlers as well.
+    #   You can test parent relationship w/ code below:
+    #   # Creating loggers
+    #   root_logger = logging.getLogger()
+    #   child_logger = logging.getLogger('module.submodule')
+    #   # Check and print the parent of the child_logger
+    #   print(f"Logger: {child_logger.name}, Parent: {child_logger.parent.name if child_logger.parent else 'No Parent'}")
+    #   # It will output:
+    #   # Logger: module.submodule, Parent: root
+    if not logger.hasHandlers() or logger.handlers == []:
         if formatter is None:
-            formatter = default_formatter
+            # %(levelname)7s to align 7 bytes to right, %(levelname)-7s to left.
+            default_formatter = CustomFormatter(
+                f"[%(asctime)s][%(levelname)7s][%(module){LOG_MODULE_NAME_LEN}s][%(lineno)4d]: %(message)s",
+            )
+            if formatter_simple_time_only:
+                formatter = logging.Formatter("%(asctime)s: %(message)s")
+            else:
+                formatter = default_formatter
 
         # use stream handler for console logging if log_file is None
         if log_file is None:
-            handler = logging.StreamHandler()
+            # by default steam is stderr. Use stdout to easy redirect in cli
+            handler = logging.StreamHandler(stream=sys.stdout)
         else:
             # normalize log_file path
             log_file = normal_path(log_file)
+
             # create log directory if not exist
             os.makedirs(path.dirname(log_file), exist_ok=True)
             if rotate:
@@ -119,23 +138,9 @@ def setup_logger(
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         logger.setLevel(level)
-        logger.propagate = (
-            False  # Prevents log messages from being duplicated to the root logger
-        )
+        # Prevents log messages from being duplicated to the root logger
+        logger.propagate = False
 
-    return logger
-
-
-def _setup_api_logger():
-    """setup api logger in append mode"""
-    # logger for API outputs
-    api_formatter = logging.Formatter(
-        "%(asctime)s: %(message)s", datefmt="%Y-%m-%d %I:%M:%S"
-    )
-    api_outputs_filename = path.join(log_directory, "px_api.log")
-    logger = setup_logger(
-        LOG_LEVEL, api_outputs_filename, name="api", mode="a", formatter=api_formatter
-    )
     return logger
 
 
@@ -155,13 +160,14 @@ def pretty_json(json_str):
         return json_str
 
 
-def pretty_print_request_json(request):
+def pretty_print_request_json(request, logger):
     """pretty print request in json format if possible, otherwise print in text or bytes
     Note it may differ from the actual request as it is pretty formatted.
 
     Params
     ------
-    request:   requests' request object
+    request:    requests' request object
+    logger:     logging instance
     """
     # pretty json if possible
     req_body = pretty_json(request.body)
@@ -184,9 +190,7 @@ def pretty_print_request_json(request):
             # else unchanged as bytes
             # print(req_body)
 
-    api_logger = _setup_api_logger()
-
-    api_logger.debug(
+    logger.info(
         "{}\n{}\n\n{}\n\n{}\n".format(
             "-----------Request----------->",
             request.method + " " + request.url,
@@ -196,13 +200,14 @@ def pretty_print_request_json(request):
     )
 
 
-def pretty_print_response_json(response):
+def pretty_print_response_json(response, logger):
     """pretty print response in json format
     If failing to parse body in json format, print in text.
 
     Params
     ------
     response:   requests' response object
+    logger:     logging instance
     """
     try:
         resp_data = response.json()
@@ -211,9 +216,7 @@ def pretty_print_response_json(response):
     except ValueError:
         resp_body = response.text
 
-    api_logger = _setup_api_logger()
-
-    api_logger.debug(
+    logger.info(
         "{}\n{}\n\n{}\n\n{}\n".format(
             "<-----------Response-----------",
             "Status code:" + str(response.status_code),
@@ -233,6 +236,7 @@ def post(
     amend_headers=True,
     content_type=None,
     session=None,
+    logger=None,
     **kwargs,
 ):
     """shorthand for request('POST', ...)"""
@@ -246,6 +250,7 @@ def post(
         amend_headers=amend_headers,
         content_type=content_type,
         session=session,
+        logger=logger,
         **kwargs,
     )
 
@@ -262,6 +267,7 @@ def request(
     amend_headers=True,  # NA for GET
     content_type=None,
     session=None,
+    logger=None,
     **kwargs,
 ):
     """
@@ -283,6 +289,8 @@ def request(
     amend_headers:  boolean, Append common headers, e.g. set Content-Type to "application/json" if body is json
     content_type:   str, set header Content-Type if provided
     session:        requests.Session() instance, send requests in the provided session if set, and will maintain session cookies.
+    logger:         logging instance, e.g., logging.getLogger(), to pretty log API request and response in INFO level (please set proper level in the logger).
+                    Default to None, no logging.
     kwargs:         Other arguments requests.request takes.
 
     Return: response decoded as dict if possible,
@@ -329,9 +337,10 @@ def request(
     except Exception as ex:
         return Exception("request() failed with exception: %s" % str(ex))
 
-    # pretty request and response into API log file
-    pretty_print_request_json(resp.request)
-    pretty_print_response_json(resp)
+    if logger:
+        # pretty request and response into API log file
+        pretty_print_request_json(resp.request, logger)
+        pretty_print_response_json(resp, logger)
 
     if resp.status_code >= 400:
         return Exception(
@@ -355,7 +364,7 @@ def request(
         return ""
 
 
-def bash(cmd:str, encoding=None):
+def bash(cmd: str, encoding=None):
     """
     subprocess.run with intuitive options to execute system commands just like shell bash command.
 
@@ -375,7 +384,7 @@ def bash(cmd:str, encoding=None):
     import sys
     import locale
 
-    if sys.version_info >= (3,7): 
+    if sys.version_info >= (3, 7):
         return run(cmd, shell=True, capture_output=True, text=True, encoding=encoding)
 
     elif sys.version_info >= (3, 5):
