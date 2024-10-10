@@ -16,6 +16,7 @@ from pxutil import (
     import_any,
 )
 import os
+import io
 import sys
 import pytest
 import os.path as osp
@@ -256,22 +257,49 @@ def test_post():
     assert response["headers"]["My-Header"] == "value"
 
 
-def test_setup_logger(caplog):
-    """note: caplog is a built-in pytest fixture designed for capturing log records"""
+def test_setup_logger():
     from pxutil import setup_logger
     import logging
 
     ## default logger format, stdout
+    capturedOutput = io.StringIO()  # Create StringIO object
+    origin_stdout = sys.stdout
+    sys.stdout = capturedOutput  # and redirect stdout.
+
     logger1 = setup_logger(logging.INFO)
-    logger1.info('info log')
+    logger1.info("info log")
 
-    # Use caplog to capture log outputs
-    with caplog.at_level(logging.INFO):
-        logger1.info('info log')
+    standard_output = capturedOutput.getvalue()
+    sys.stdout = origin_stdout  # Reset redirect.
 
-    # Check if 'info log' is in the captured output
-    assert any('info log' in message for message in caplog.text.splitlines()), "The log does not contain 'info log'"
+    assert "info log" in standard_output, "The log does not contain 'info log'"
 
     ## default logger format, file
+    log_file = "a.log"
+    logger2 = setup_logger(logging.INFO, log_file, name="file_logger", mode="w")
+    logger2.info("info log")
 
-    ## simple time only format, stdout 
+    with open(log_file) as f:
+        content = f.read()
+        assert "info log" in content, "The log does not contain 'info log'"
+
+    # cleanup
+    os.remove(log_file)
+
+    ## simple time only format, stdout
+    log_file = "a.log"
+    logger3 = setup_logger(
+        logging.INFO,
+        log_file,
+        name="time_only",
+        formatter_simple_time_only=True,
+        mode="w",
+    )
+    logger3.info("good for API logging")
+
+    with open(log_file) as f:
+        content = f.read()
+        assert "INFO" not in content, "The log does not contain log level 'INFO'"
+
+    # cleanup
+    os.remove(log_file)
