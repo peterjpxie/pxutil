@@ -190,7 +190,7 @@ def pretty_print_request_json(request, logger):
             # else unchanged as bytes
             # print(req_body)
 
-    logger.info(
+    logger.debug(
         "{}\n{}\n\n{}\n\n{}\n".format(
             "-----------Request----------->",
             request.method + " " + request.url,
@@ -216,7 +216,7 @@ def pretty_print_response_json(response, logger):
     except ValueError:
         resp_body = response.text
 
-    logger.info(
+    logger.debug(
         "{}\n{}\n\n{}\n\n{}\n".format(
             "<-----------Response-----------",
             "Status code:" + str(response.status_code),
