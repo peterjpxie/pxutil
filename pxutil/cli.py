@@ -60,7 +60,7 @@ def chat_main():
         "-m",
         "--model",
         default="gpt-4o",
-        help="OpenAI chatGPT model, gpt-4o(default), gpt-3.5-turbo etc.",
+        help="OpenAI chatGPT model, gpt-4o(default), gpt-4o-mini etc.",
     )
     parser.add_argument(
         "-q",

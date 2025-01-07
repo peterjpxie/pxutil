@@ -762,7 +762,7 @@ class ChatAPI:
     Content-Length: 269
 
     {
-        "model": "gpt-3.5-turbo", # gpt-4
+        "model": "gpt-3.5-turbo",
         "messages": [
             {
                 "role": "system",
@@ -811,7 +811,7 @@ class ChatAPI:
             "OPENAI_API_KEY", None
         ),  # default to environment variable OPENAI_API_KEY
         system_msg=None,
-        model="gpt-3.5-turbo",  # gpt-4 etc.
+        model="gpt-4o",
         remember_chat_history=True,
         max_chat_history=2,  # each chat has 2 messages, a question and an answer
     ):
