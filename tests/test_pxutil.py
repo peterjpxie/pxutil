@@ -314,3 +314,28 @@ def test_setup_logger():
     # avoid file not closed quick enough
     time.sleep(0.01)
     os.remove(log_file)
+
+
+def test_read_env_file():
+    from pxutil import read_env_file
+
+    ## Test with a valid .env file
+    file_path = "test_valid.env"
+    with open(file_path, "w") as f:
+        f.write("KEY1=value1\n")
+        f.write("KEY2=value2\n")
+        f.write("# This is a comment\n")
+        f.write("\n")  # Empty line
+    
+    expected_output = {"KEY1": "value1", "KEY2": "value2"}
+    result = read_env_file(file_path)
+    assert result == expected_output
+    
+    # Clean up
+    os.remove(file_path)    
+
+    ## Test with a non-existent file
+    file_path = "non_existent.env"
+    result = read_env_file(file_path)
+    assert isinstance(result, Exception)
+    assert str(result) == f"The file {file_path} does not exist."    

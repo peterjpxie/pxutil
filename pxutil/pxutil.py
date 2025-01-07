@@ -911,6 +911,40 @@ def list_module_contents(module_name: str):
             print(f"- {name}")
 
 
+def read_env_file(file_path: str):
+    """
+    Reads a .env file (ini file w/o section header) and returns a dictionary of environment variables.
+
+    file_path: Path to the .env file.
+    return: Dictionary with key-value pairs of environment variables or Exception if any. 
+        Note it is all string values. And return empty dict {} if no environment variables set.
+    """
+    env_vars = {}
+    
+    try:
+        with open(file_path, 'r') as file:
+            for line in file:
+                # Strip whitespace and ignore comments or empty lines
+                stripped_line = line.strip()
+                if stripped_line == '' or stripped_line.startswith('#'):
+                    continue
+                
+                # Split the line into key and value parts
+                key_value_pair = stripped_line.split('=', 1)
+                if len(key_value_pair) != 2:
+                    continue  # Invalid line without '=' character
+
+                key, value = key_value_pair
+                env_vars[key.strip()] = value.strip()
+    
+    except FileNotFoundError:
+        return Exception(f"The file {file_path} does not exist.")
+    except Exception as e:
+        return e
+    
+    return env_vars
+
+
 def main():
     """main function for self test"""
     pass
