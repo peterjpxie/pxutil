@@ -95,6 +95,9 @@ px.post()
 
 # set up loggers
 px.setup_logger()
+
+# read classic .env file w/o ini section headers, e.g. docker compose .env, and return a dict
+px.read_env_file(file_path)
 ```
 
 ## Usage - CLI
@@ -111,16 +114,22 @@ git clone https://github.com/peterjpxie/pxutil.git
 cd pxutil
 pip3 install -r tests/requirements.txt
 
-pytest # current python version
+# current python version
+pytest 
 
-or 
+# or 
+# multiple python versions
+tox 
 
-tox # multiple python versions
-
-or
-
-cibuildwheel --platform linux . # multiple python versions in docker
+# or
+# multiple python versions in docker
+cibuildwheel --platform linux . 
 ```
+
+Note some tests are not reliable, e.g. `test_post` depending on server https://httpbin.org, and moved to manual_test_xx.py to avoid CI failure. Please run them manually as follows.
+```
+pytest tests/manual_test_pxutil.py
+``` 
 
 ## Places to Update Supported Python Versions
 ```

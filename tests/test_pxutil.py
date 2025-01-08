@@ -207,57 +207,6 @@ def test_import_any():
         assert tempfile.a == 1
 
 
-def test_request():
-    """test request"""
-    from pxutil import request
-    import requests
-
-    # Test GET request
-    get_url = "https://httpbin.org/get"
-    response = request("GET", get_url)
-    assert isinstance(response, dict)
-    assert response["url"] == get_url
-
-    # Test POST request with JSON data and headers
-    post_url = "https://httpbin.org/post"
-    json_data = {"key": "value"}
-    headers = {"My-Header": "value"}
-    response = request("POST", post_url, data=json.dumps(json_data), headers=headers)
-    assert isinstance(response, dict)
-    assert response["json"] == json_data
-    assert response["headers"]["My-Header"] == "value"
-
-    ## Test session with cookies
-    # Create a Session object to persist cookies
-    session = requests.Session()
-
-    set_cookie_url = "https://httpbin.org/cookies/set/sessioncookie/123456789"
-    get_cookies_url = "https://httpbin.org/cookies"
-
-    # Set a cookie
-    # This url will redirect to get_cookies_url while setting the cookies, we don't need that so set allow_redirects=False.
-    response = request("GET", set_cookie_url, session=session, allow_redirects=False)
-    assert isinstance(response, Exception) is False
-
-    # Make another request to check cookies persistence
-    # get_cookies_url will return cookies in the request as json body response
-    response = request("GET", get_cookies_url, session=session)
-    assert response == {"cookies": {"sessioncookie": "123456789"}}
-
-
-def test_post():
-    """test post, a shorthand of request"""
-    from pxutil import post
-
-    # Test POST request with JSON data and headers
-    post_url = "https://httpbin.org/post"
-    json_data = {"key": "value"}
-    headers = {"My-Header": "value"}
-    response = post(post_url, data=json.dumps(json_data), headers=headers)
-    assert isinstance(response, dict)
-    assert response["headers"]["My-Header"] == "value"
-
-
 def test_setup_logger():
     from pxutil import setup_logger
     import logging
@@ -283,7 +232,7 @@ def test_setup_logger():
     with open(log_file) as f:
         content = f.read()
         assert "info log" in content, "The log does not contain 'info log'"
-    
+
     # cleanup
     for handler in logger2.handlers:
         handler.close()
@@ -310,7 +259,7 @@ def test_setup_logger():
     # cleanup
     for handler in logger3.handlers:
         handler.close()
-        logger3.removeHandler(handler)    
+        logger3.removeHandler(handler)
     # avoid file not closed quick enough
     time.sleep(0.01)
     os.remove(log_file)
@@ -326,16 +275,16 @@ def test_read_env_file():
         f.write("KEY2=value2\n")
         f.write("# This is a comment\n")
         f.write("\n")  # Empty line
-    
+
     expected_output = {"KEY1": "value1", "KEY2": "value2"}
     result = read_env_file(file_path)
     assert result == expected_output
-    
+
     # Clean up
-    os.remove(file_path)    
+    os.remove(file_path)
 
     ## Test with a non-existent file
     file_path = "non_existent.env"
     result = read_env_file(file_path)
     assert isinstance(result, Exception)
-    assert str(result) == f"The file {file_path} does not exist."    
+    assert str(result) == f"The file {file_path} does not exist."
