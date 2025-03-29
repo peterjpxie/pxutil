@@ -297,7 +297,7 @@ def request(
             or decoded text if not json,
             or original bytes if decoding fails (not likely),
             or '' if response has no body,
-            or Exception if any error or non-2xx response code.
+            or Exception if any error or response code >=400.
     """
     # append common headers
     # deep copy headers to avoid using the same headers object (default {}) in different requests
@@ -343,9 +343,10 @@ def request(
         pretty_print_response_json(resp, logger)
 
     if resp.status_code >= 400:
-        return Exception(
-            f"API call to {url} failed with response code {resp.status_code}."
-        )
+        error = f"API call to {url} failed with response code {resp.status_code}."
+        if resp.text and len(resp.text)>0:
+            error = error + f'body:\n{pretty_json(resp.text)}'
+        return Exception(error)
 
     if resp.content:
         # return json if possible
