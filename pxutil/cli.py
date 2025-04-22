@@ -11,11 +11,13 @@ from time import sleep
 import argparse
 import shutil
 
-# add .pxutil functions and classes to pxutil/__init__.py so that
+# add pxutil/pxutil.py functions and classes to pxutil/__init__.py so that
 # it can be imported as `from pxutil import <func>` both outside and inside pxutil package
 from pxutil import bashx, register_signal_ctrl_c, ChatAPI
 import pxutil as px
 
+# defaults
+Chat_Model_Default = 'gpt-4.1-mini'
 
 def loop_main():
     """px.loop CLI script
@@ -59,8 +61,8 @@ def chat_main():
     parser.add_argument(
         "-m",
         "--model",
-        default="gpt-4o",
-        help="OpenAI chatGPT model, gpt-4o(default), gpt-4o-mini etc.",
+        default=Chat_Model_Default,
+        help=f"OpenAI chatGPT model, {Chat_Model_Default}(default) etc.",
     )
     parser.add_argument(
         "-q",
