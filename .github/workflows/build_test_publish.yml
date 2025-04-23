@@ -36,7 +36,7 @@ jobs:
                 
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: wheels-${{ matrix.os }}  # unique name per OS
           path: ./wheelhouse/*.whl
 
   build_sdist:
@@ -61,9 +61,22 @@ jobs:
     if: github.event_name == 'release' && github.event.action == 'published'
     # if: github.event_name == 'workflow_dispatch'
     steps:
-      - uses: actions/download-artifact@v3
+      - name: Download wheels for windows
+        uses: actions/download-artifact@v3
         with:
-          name: wheels
+          name: wheels-windows-latest
+          path: dist
+
+      - name: Download wheels for ubuntu
+        uses: actions/download-artifact@v3
+        with:
+          name: wheels-ubuntu-latest
+          path: dist
+
+      - name: Download wheels for macos
+        uses: actions/download-artifact@v3
+        with:
+          name: wheels-macos-latest
           path: dist
 
       - uses: actions/download-artifact@v3
