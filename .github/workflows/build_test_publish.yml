@@ -62,24 +62,24 @@ jobs:
     # if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Download wheels for windows
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: wheels-windows-latest
           path: dist
 
       - name: Download wheels for ubuntu
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: wheels-ubuntu-latest
           path: dist
 
       - name: Download wheels for macos
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: wheels-macos-latest
           path: dist
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: sdist
           path: dist

@@ -3,7 +3,7 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
-_version = "0.0.42"
+_version = "0.0.43"
 
 with open("README.md") as readme:
     long_description = readme.read()
