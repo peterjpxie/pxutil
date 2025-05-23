@@ -3,7 +3,7 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
-_version = "0.0.43"
+_version = "0.0.44"
 
 with open("README.md") as readme:
     long_description = readme.read()
@@ -35,7 +35,6 @@ setup(
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
         "Operating System :: MacOS",
         "Operating System :: POSIX",
         "Operating System :: Microsoft :: Windows",
