@@ -3,7 +3,7 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
-_version = "0.0.44"
+_version = "0.0.45"
 
 with open("README.md") as readme:
     long_description = readme.read()
@@ -43,6 +43,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",        
         "Topic :: Software Development :: Libraries",
     ],
     # build cython modules

@@ -80,7 +80,7 @@ print(conf.server_ip)
 # exit program if return value is an exception
 @px.exit_on_exception
 def to_int(any):
-    if isinstance(dict):
+    if isinstance(any, dict):
         return Exception('dict is not supported to convert to int.')
     return int(any)
 
@@ -97,7 +97,8 @@ px.post()
 px.setup_logger()
 
 # read classic .env file w/o ini section headers, e.g. docker compose .env, and return a dict
-px.read_env_file(file_path)
+# alternative to package dotnet
+px.read_dotenv(file_path='.env')
 ```
 
 ## Usage - CLI

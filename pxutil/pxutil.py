@@ -344,8 +344,8 @@ def request(
 
     if resp.status_code >= 400:
         error = f"API call to {url} failed with response code {resp.status_code}."
-        if resp.text and len(resp.text)>0:
-            error = error + f'body:\n{pretty_json(resp.text)}'
+        if resp.text and len(resp.text) > 0:
+            error = error + f"body:\n{pretty_json(resp.text)}"
         return Exception(error)
 
     if resp.content:
@@ -469,46 +469,6 @@ def bashx(cmd, x=True, e=False):
             return ret
     else:
         raise Exception("Require python 3.5 or above.")
-
-
-def trim_docstring(docstring):
-    """
-    Trim leading indents, leading and trailing blank lines from multiple liner using triple quote like docstring.
-
-    Reference: https://www.python.org/dev/peps/pep-0257/#handling-docstring-indentation
-
-    Argument: multiple liner string, typically using triple quote.
-    Return: trimmed multiple line string
-
-    Note: textwrap.dedent(docstring) does the same job, but not removing leading blank lines.
-    """
-    import sys
-
-    if not docstring:
-        return ""
-    # Convert tabs to spaces (following the normal Python rules)
-    # and split into a list of lines:
-    lines = docstring.expandtabs().splitlines()
-    # Determine minimum indentation (first line doesn't count):
-    indent = (
-        sys.maxsize
-    )  # sys.maxint in Python 2 is replaced with sys.maxsize in Python 3
-    for line in lines[1:]:
-        stripped = line.lstrip()
-        if stripped:
-            indent = min(indent, len(line) - len(stripped))
-    # Remove indentation (first line is special):
-    trimmed = [lines[0].strip()]
-    if indent < sys.maxsize:
-        for line in lines[1:]:
-            trimmed.append(line[indent:].rstrip())
-    # Strip off trailing and leading blank lines:
-    while trimmed and not trimmed[-1]:
-        trimmed.pop()
-    while trimmed and not trimmed[0]:
-        trimmed.pop(0)
-    # Return a single string:
-    return "\n".join(trimmed)
 
 
 def grep(pattern, string=None, filename=None):
@@ -912,37 +872,37 @@ def list_module_contents(module_name: str):
             print(f"- {name}")
 
 
-def read_env_file(file_path: str):
+def read_dotenv(file_path=".env"):
     """
-    Reads a .env file (ini file w/o section header) and returns a dictionary of environment variables.
+    Reads a .env file (ini file w/o section header) and returns a dict of environment variables like os.environ.
 
-    file_path: Path to the .env file.
-    return: Dictionary with key-value pairs of environment variables or Exception if any. 
+    file_path: str, path to the .env file.
+    return: dict with key-value pairs of environment variables or Exception if any.
         Note it is all string values. And return empty dict {} if no environment variables set.
     """
     env_vars = {}
-    
+
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             for line in file:
                 # Strip whitespace and ignore comments or empty lines
                 stripped_line = line.strip()
-                if stripped_line == '' or stripped_line.startswith('#'):
+                if stripped_line == "" or stripped_line.startswith("#"):
                     continue
-                
+
                 # Split the line into key and value parts
-                key_value_pair = stripped_line.split('=', 1)
+                key_value_pair = stripped_line.split("=", 1)
                 if len(key_value_pair) != 2:
                     continue  # Invalid line without '=' character
 
                 key, value = key_value_pair
                 env_vars[key.strip()] = value.strip()
-    
+
     except FileNotFoundError:
         return Exception(f"The file {file_path} does not exist.")
     except Exception as e:
         return e
-    
+
     return env_vars
 
 

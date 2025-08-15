@@ -86,17 +86,6 @@ def test_grep():
     assert ret == ["def"]
 
 
-def test_trim_docstring():
-    ret = px.trim_docstring(
-        """
-    ab
-        cd
-    """
-    )
-    # print(ret)
-    assert ret == "ab\n    cd"
-
-
 def test_replace_in_file():
     import os
 
@@ -265,8 +254,8 @@ def test_setup_logger():
     os.remove(log_file)
 
 
-def test_read_env_file():
-    from pxutil import read_env_file
+def test_read_dotenv():
+    from pxutil import read_dotenv
 
     ## Test with a valid .env file
     file_path = "test_valid.env"
@@ -277,7 +266,7 @@ def test_read_env_file():
         f.write("\n")  # Empty line
 
     expected_output = {"KEY1": "value1", "KEY2": "value2"}
-    result = read_env_file(file_path)
+    result = read_dotenv(file_path)
     assert result == expected_output
 
     # Clean up
@@ -285,6 +274,6 @@ def test_read_env_file():
 
     ## Test with a non-existent file
     file_path = "non_existent.env"
-    result = read_env_file(file_path)
+    result = read_dotenv(file_path)
     assert isinstance(result, Exception)
     assert str(result) == f"The file {file_path} does not exist."
