@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# cython: language_level=3
 """pure python with cython type annotation
 
 Install:
