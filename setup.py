@@ -32,6 +32,14 @@ setup(
         "requests>=2.26.0",
         "cython>=3.0.0",
     ],
+    # # optional dependency example:
+    # # pip install pxutil[test] to install optional test dependencies
+    # extras_require={
+    #     "test": [
+    #         "pytest>=6.0.0",
+    #         "pytest-cov>=2.10.0",
+    #     ],
+    # },
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
