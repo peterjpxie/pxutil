@@ -133,6 +133,26 @@ def ls_mod_main():
     px.list_module_contents(args.module)
 
 
+def onefile_main():
+    """px.onefile cli
+    
+    combine files in a repo into one for LLM prompt, and respect .gitignore and 
+    an optional spec file in the same format to specify files to include.
+
+    output sample:
+
+    file: a.py
+    ```
+    content
+    ```
+
+    file: b.js
+    ```
+    content
+    ```
+    """
+    pass
+
 if __name__ == "__main__":
     # self test
     # # add parent directory of pxutil package to sys.path so that we can import the package from inside.
