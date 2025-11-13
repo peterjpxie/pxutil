@@ -10,7 +10,7 @@ To run cython:
 This generates .c source file and .so library file.
 2. python cython_call.py
 Call cython modules in a normal .py file.
- 
+
 time python cython_call.py 500000000
 sum: 500000000
 

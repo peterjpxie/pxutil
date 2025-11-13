@@ -31,7 +31,7 @@ setup(
     install_requires=[
         "requests>=2.26.0",
         "cython>=3.0.0",
-        "pathspec>=0.12.1",        
+        "pathspec>=0.12.1",
     ],
     # # optional dependency example:
     # # pip install pxutil[test] to install optional test dependencies
@@ -68,7 +68,7 @@ setup(
             "chat=pxutil.cli:chat_main",
             "px.runc=pxutil.cli:runc_main",
             "px.ls.mod=pxutil.cli:ls_mod_main",
-            "px.onefile=pxutil.cli:onefile_main",            
+            "px.onefile=pxutil.cli:onefile_main",
         ]
     },
 )
