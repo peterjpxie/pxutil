@@ -1,7 +1,7 @@
 # temp files
-a.py
-a.txt
-a.ipynb
+a.*
+# spec file for px.onefile cli
+.includefiles
 # IDE 
 .vscode/*
 # cython output c files

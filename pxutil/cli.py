@@ -133,6 +133,14 @@ def ls_mod_main():
     px.list_module_contents(args.module)
 
 
+def list_files_like_git_ls_files(path):
+    """List all files recursively in current directory, git ls-files style. return a generator."""
+    for root, dirs, files in os.walk(path):
+        # For each file, construct relative path and print
+        for file in files:
+            yield os.path.relpath(os.path.join(root, file), path)
+
+
 def onefile_main():
     """px.onefile cli
     
@@ -151,7 +159,68 @@ def onefile_main():
     content
     ```
     """
-    pass
+    import pathspec
+    
+
+    ## Parse command line arguments.
+    parser = argparse.ArgumentParser(
+        description="Combine files in a repo into one for LLM prompt, and respect .gitignore and an optional spec file in the same format to specify files to include. Run it in your repo root folder."
+    )
+    parser.add_argument(
+        "--tldr",
+        action="store_true",        
+        help="sample usages",
+    )
+    parser.add_argument(
+        "-s",
+        "--spec",
+        help="spec file in the same format as .gitignore but specify files to include, e.g., .includefiles",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        default="a.md",
+        help="output file, default: a.md",
+    )    
+    args = parser.parse_args()
+    
+    ## get files excluding the ones specified in .gitignore
+    ## use 'git ls-files' for best match and recursive .gitignore support
+    ls_files = []
+    if os.path.isdir('.git'):
+        if not shutil.which('git'):
+            sys.exit('Oops... git command not found. Please install git first.')
+        r = px.bash('git ls-files')
+        if r.returncode != 0:
+            sys.exit(f'Error: git ls-files failed with return code: {r.returncode}, stderr: {r.stderr}')
+        ls_files = r.stdout.splitlines()
+    else:
+        # get all files if not a repo
+        for root, dirs, files in os.walk('.'):
+            # For each file, construct relative path to be same output format as git ls-files
+            for file in files:
+                ls_files.append(os.path.relpath(os.path.join(root, file), '.'))
+
+    ## get files included in spec file, e.g., .includefiles
+    include_files = None
+    spec_file = args.spec
+    if spec_file:
+        if not os.path.isfile(spec_file):
+            sys.exit(f'Error: spec file {spec_file} does not exit.')
+        with open(spec_file, 'r') as f:
+            spec_text = f.read()
+        spec = pathspec.GitIgnoreSpec.from_lines(spec_text.splitlines())
+        matches = spec.match_tree('.')   
+        include_files = list(matches)
+
+    ## get intersection of git_ls_files and include_files
+    if include_files:
+        files = set(ls_files) & set(include_files)
+    else:
+        files = ls_files
+
+    for f in files:
+        print(f)
 
 if __name__ == "__main__":
     # self test
