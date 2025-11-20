@@ -232,7 +232,7 @@ def onefile_main():
             spec_text = f.read()
         spec = pathspec.GitIgnoreSpec.from_lines(spec_text.splitlines())
         matches = spec.match_tree(".")
-        include_files = [m for m in matches]
+        include_files = list(matches)
 
     ## get intersection of git_ls_files and include_files
     if include_files:
@@ -240,30 +240,42 @@ def onefile_main():
     else:
         files = ls_files
 
+    # exclude binary files
+    files = [ f for f in files if px.is_text_file(f)]
+
     output = px.normal_path(args.output)
     if not os.path.isdir(os.path.dirname(output)):
         sys.exit(f"Error: Parent directory of output {args.output} does not exit.")
     with open(output, "w") as out_f:
+        # print list of files
+        separator = "```"
+        to_output = (
+            f"files:\n"
+            f"{separator}\n"
+            f"{'\n'.join(files)}\n"
+            f"{separator}\n\n"
+        )
+        out_f.write(to_output)
+
+        # print content of files
         for file in files:
-            if px.is_text_file(file):
-                # print(f)
-                with open(file, "r") as f:
-                    content = f.read()
+            with open(file, "r") as f:
+                content = f.read()
 
-                # code block separator
-                if "```" in content:
-                    # 4 ticks to escape
-                    separator = "````"
-                else:
-                    separator = "```"
+            # code block separator
+            if "```" in content:
+                # 4 ticks to escape
+                separator = "````"
+            else:
+                separator = "```"
 
-                to_output = (
-                    f"file: `{file}`\n"
-                    f"{separator}\n"
-                    f"{content}\n"
-                    f"{separator}\n\n"
-                )
-                out_f.write(to_output)
+            to_output = (
+                f"file: `{file}`\n"
+                f"{separator}\n"
+                f"{content}\n"
+                f"{separator}\n\n"
+            )
+            out_f.write(to_output)
     print(f"one file is generated at {args.output}")
 
 
