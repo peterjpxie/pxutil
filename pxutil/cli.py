@@ -186,10 +186,10 @@ def onefile_main():
     # With spec to include only certain files
     px.onefile -s .includefiles
 
-    spec example: only *.py and *.js files
+    spec example: only *.py except tests/*.py
     ---
     *.py
-    *.js
+    !tests/*
     ---
     
     spec example: all files except tests/*
