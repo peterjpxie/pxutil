@@ -906,9 +906,33 @@ def read_dotenv(file_path=".env"):
     return env_vars
 
 
+def is_text_file(filepath: str, blocksize=512):
+    """
+    Check if a file is a text file.
+    Reads a block of the file and tries to decode it as UTF-8.
+    If decoding succeeds, consider it text.
+    """
+    try:
+        with open(filepath, "rb") as f:
+            block = f.read(blocksize)
+    except Exception:
+        # Could not open file
+        return False
+
+    if not block:
+        # Empty files can be considered text
+        return True
+    try:
+        block.decode("utf-8")
+        return True
+    except UnicodeDecodeError:
+        return False
+
+
 def main():
     """main function for self test"""
-    pass
+    print(is_text_file("pxutil_cy.cpython-310-x86_64-linux-gnu.so"))
+
     # ChatAPI
     # chatapi = ChatAPI()  # remember_chat_history=False
     # answer = chatapi.chat("who are you?")

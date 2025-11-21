@@ -2,7 +2,7 @@
 """
 Sample __main__.py to be executed as python -m <pxutil>
 
-Ref: 
+Ref:
 https://docs.python.org/3/library/__main__.html
 pip.__main__.py
 """

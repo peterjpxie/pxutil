@@ -103,10 +103,11 @@ px.read_dotenv(file_path='.env')
 
 ## Usage - CLI
 ```
-px.loop -h      # run a command in loop
 px.chat -h      # chat cli based on chatGPT
+px.onefile -h   # alternative to files-to-prompt, but hand crafted. See --tldr for examples.
 px.runc -h      # compile and run single c file with gcc
 px.ls.mod -h    # list content of a module/package: submodules, classes, functions.
+px.loop -h      # run a command in loop
 ``` 
 
 ## Test
