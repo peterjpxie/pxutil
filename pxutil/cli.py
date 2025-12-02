@@ -6,6 +6,7 @@ Refer: https://python-packaging.readthedocs.io/en/latest/command-line-scripts.ht
 """
 
 import os
+
 # import pdb
 import sys
 import textwrap
@@ -241,7 +242,7 @@ def onefile_main():
         files = ls_files
 
     # exclude binary files
-    files = [ f for f in files if px.is_text_file(f)]
+    files = [f for f in files if px.is_text_file(f)]
 
     output = px.normal_path(args.output)
     if not os.path.isdir(os.path.dirname(output)):
@@ -249,12 +250,15 @@ def onefile_main():
     with open(output, "w") as out_f:
         # print list of files
         separator = "```"
+        file_list = "\n".join(files)
+        # fmt: off
         to_output = (
             f"files:\n"
             f"{separator}\n"
-            f"{'\n'.join(files)}\n"
+            f"{file_list}\n"
             f"{separator}\n\n"
         )
+        # fmt: on
         out_f.write(to_output)
 
         # print content of files
@@ -268,13 +272,14 @@ def onefile_main():
                 separator = "````"
             else:
                 separator = "```"
-
+            # fmt: off
             to_output = (
                 f"file: `{file}`\n"
                 f"{separator}\n"
                 f"{content}\n"
                 f"{separator}\n\n"
             )
+            # fmt: on
             out_f.write(to_output)
     print(f"one file is generated at {args.output}")
 
