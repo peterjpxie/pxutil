@@ -271,13 +271,14 @@ def onefile_main():
                 separator = "````"
             else:
                 separator = "```"
-
+            # fmt: off
             to_output = (
                 f"file: `{file}`\n"
                 f"{separator}\n"
                 f"{content}\n"
                 f"{separator}\n\n"
             )
+            # fmt: on
             out_f.write(to_output)
     print(f"one file is generated at {args.output}")
 
