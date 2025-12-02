@@ -249,10 +249,11 @@ def onefile_main():
     with open(output, "w") as out_f:
         # print list of files
         separator = "```"
+        file_list = '\n'.join(files)
         to_output = (
             f"files:\n"
             f"{separator}\n"
-            f"{'\n'.join(files)}\n"
+            f"{file_list}\n"
             f"{separator}\n\n"
         )
         out_f.write(to_output)
