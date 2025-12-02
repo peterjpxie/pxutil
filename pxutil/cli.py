@@ -250,12 +250,14 @@ def onefile_main():
         # print list of files
         separator = "```"
         file_list = '\n'.join(files)
+        # fmt: off
         to_output = (
             f"files:\n"
             f"{separator}\n"
             f"{file_list}\n"
             f"{separator}\n\n"
         )
+        # fmt: on
         out_f.write(to_output)
 
         # print content of files
