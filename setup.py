@@ -3,7 +3,7 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
-_version = "0.0.47"
+_version = "0.0.48"
 
 with open("README.md") as readme:
     long_description = readme.read()
@@ -27,7 +27,7 @@ setup(
     url="https://github.com/peterjpxie/pxutil",
     license="MIT",
     packages=find_packages(),
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     install_requires=[
         "requests>=2.26.0",
         "cython>=3.0.0",
@@ -51,6 +51,7 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",        
         "Topic :: Software Development :: Libraries",
     ],
     # build cython modules
