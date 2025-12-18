@@ -2,8 +2,6 @@
 """
 Some handy utilities from Peter Jiping Xie
 """
-# __all__ = ['bash','trim_docstring','grep']
-
 
 import copy
 import sys
@@ -927,6 +925,13 @@ def is_text_file(filepath: str, blocksize=512):
         return True
     except UnicodeDecodeError:
         return False
+
+
+def token_counter(text: str):
+    """retun number of tokens counted by tiktoken"""
+    import tiktoken
+    enc = tiktoken.get_encoding("o200k_base")
+    return len(enc.encode(text))
 
 
 def main():
