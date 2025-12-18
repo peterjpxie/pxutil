@@ -284,10 +284,36 @@ def onefile_main():
     print(f"one file is generated at {args.output}")
 
 
+def token_counter_main():
+    """px.token.counter cli
+
+    count LLM tokens of a given file
+    """
+    import pathspec
+
+    ## Parse command line arguments.
+    parser = argparse.ArgumentParser(description="count LLM tokens of a given file.")
+    parser.add_argument(
+        "file",
+        help="file to count",
+    )
+
+    args = parser.parse_args()
+    if not os.path.isfile(args.file):
+        sys.exit(f"{args.file} does not exist!")
+
+    try:
+        with open(args.file, "r") as f:
+            content = f.read()
+        print(px.token_counter(content))
+    except Exception as e:
+        print(f"Failed to count token with error: {e}")
+
+
 if __name__ == "__main__":
     # self test
     # # add parent directory of pxutil package to sys.path so that we can import the package from inside.
     # sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
     # loop_main()
-    chat_main()
+    token_counter_main()

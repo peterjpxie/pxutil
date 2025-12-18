@@ -278,3 +278,7 @@ def test_read_dotenv():
     result = read_dotenv(file_path)
     assert isinstance(result, Exception)
     assert str(result) == f"The file {file_path} does not exist."
+
+
+def test_token_counter():
+    assert px.token_counter("hello world") == 2

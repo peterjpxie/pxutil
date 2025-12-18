@@ -30,5 +30,6 @@ from .pxutil import (
     setup_logger,
     read_dotenv,
     is_text_file,
+    token_counter,
 )
 from .pxutil_cy import run_loop, fib

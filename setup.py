@@ -3,7 +3,7 @@
 from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 
-_version = "0.0.48"
+_version = "0.0.49"
 
 with open("README.md") as readme:
     long_description = readme.read()
@@ -32,6 +32,7 @@ setup(
         "requests>=2.26.0",
         "cython>=3.0.0",
         "pathspec>=0.12.1",
+        "tiktoken",
     ],
     # # optional dependency example:
     # # pip install pxutil[test] to install optional test dependencies
@@ -51,7 +52,7 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
-        "Programming Language :: Python :: 3.14",        
+        "Programming Language :: Python :: 3.14",
         "Topic :: Software Development :: Libraries",
     ],
     # build cython modules
@@ -70,6 +71,7 @@ setup(
             "px.runc=pxutil.cli:runc_main",
             "px.ls.mod=pxutil.cli:ls_mod_main",
             "px.onefile=pxutil.cli:onefile_main",
+            "px.token.counter=pxutil.cli:token_counter_main",
         ]
     },
 )
