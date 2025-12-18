@@ -71,6 +71,7 @@ setup(
             "px.runc=pxutil.cli:runc_main",
             "px.ls.mod=pxutil.cli:ls_mod_main",
             "px.onefile=pxutil.cli:onefile_main",
+            "px.token.counter=pxutil.cli:token_counter_main",
         ]
     },
 )
