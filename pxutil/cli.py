@@ -292,130 +292,22 @@ def token_counter_main():
     import pathspec
 
     ## Parse command line arguments.
-    parser = argparse.ArgumentParser(
-        description="Combine files in a repo into one for LLM prompt, and respect .gitignore and an optional spec file in the same format to specify files to include. Run it in your repo root folder. Inspired by files-to-prompt."
-    )
+    parser = argparse.ArgumentParser(description="count LLM tokens of a given file.")
     parser.add_argument(
-        "--tldr",
-        action="store_true",
-        help="sample usages",
+        "file",
+        help="file to count",
     )
-    parser.add_argument(
-        "-s",
-        "--spec",
-        help="spec file in the same format as .gitignore but specify files to include, e.g., .includefiles",
-    )
-    parser.add_argument(
-        "-o",
-        "--output",
-        default="a.md",
-        help="output file, default: a.md",
-    )
+
     args = parser.parse_args()
+    if not os.path.isfile(args.file):
+        sys.exit(f"{args.file} does not exist!")
 
-    ## Usage
-    usages = f"""\
-    # Combine all files in a repo
-    px.onefile
-
-    # With spec to include only certain files
-    px.onefile -s .includefiles
-
-    spec example: only *.py except tests/*.py
-    ---
-    *.py
-    !tests/*
-    ---
-    
-    spec example: all files except tests/*
-    ---
-    /*
-    !tests/
-    ---
-    """
-    usages = textwrap.dedent(usages)
-    if args.tldr:
-        print(usages)
-        sys.exit()
-
-    ## get files excluding the ones specified in .gitignore
-    ## use 'git ls-files' for best match and recursive .gitignore support
-    ls_files = []
-    if os.path.isdir(".git"):
-        if not shutil.which("git"):
-            sys.exit("Oops... git command not found. Please install git first.")
-        r = px.bash("git ls-files")
-        if r.returncode != 0:
-            sys.exit(
-                f"Error: git ls-files failed with return code: {r.returncode}, stderr: {r.stderr}"
-            )
-        ls_files = r.stdout.splitlines()
-    else:
-        # get all files if not a repo
-        for root, dirs, files in os.walk("."):
-            # For each file, construct relative path to be same output format as git ls-files
-            for file in files:
-                ls_files.append(os.path.relpath(os.path.join(root, file), "."))
-
-    ## get files included in spec file, e.g., .includefiles
-    include_files = None
-    spec_file = args.spec
-    if spec_file:
-        if not os.path.isfile(spec_file):
-            sys.exit(f"Error: spec file {spec_file} does not exit.")
-        with open(spec_file, "r") as f:
-            spec_text = f.read()
-        spec = pathspec.GitIgnoreSpec.from_lines(spec_text.splitlines())
-        matches = spec.match_tree(".")
-        include_files = list(matches)
-
-    ## get intersection of git_ls_files and include_files
-    if include_files:
-        files = set(ls_files) & set(include_files)
-    else:
-        files = ls_files
-
-    # exclude binary files
-    files = [f for f in files if px.is_text_file(f)]
-
-    output = px.normal_path(args.output)
-    if not os.path.isdir(os.path.dirname(output)):
-        sys.exit(f"Error: Parent directory of output {args.output} does not exit.")
-    with open(output, "w") as out_f:
-        # print list of files
-        separator = "```"
-        file_list = "\n".join(files)
-        # fmt: off
-        to_output = (
-            f"files:\n"
-            f"{separator}\n"
-            f"{file_list}\n"
-            f"{separator}\n\n"
-        )
-        # fmt: on
-        out_f.write(to_output)
-
-        # print content of files
-        for file in files:
-            with open(file, "r") as f:
-                content = f.read()
-
-            # code block separator
-            if "```" in content:
-                # 4 ticks to escape
-                separator = "````"
-            else:
-                separator = "```"
-            # fmt: off
-            to_output = (
-                f"file: `{file}`\n"
-                f"{separator}\n"
-                f"{content}\n"
-                f"{separator}\n\n"
-            )
-            # fmt: on
-            out_f.write(to_output)
-    print(f"one file is generated at {args.output}")
+    try:
+        with open(args.file, "r") as f:
+            content = f.read()
+        print(px.token_counter(content))
+    except Exception as e:
+        print(f"Failed to count token with error: {e}")
 
 
 if __name__ == "__main__":
@@ -424,4 +316,4 @@ if __name__ == "__main__":
     # sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
     # loop_main()
-    chat_main()
+    token_counter_main()
