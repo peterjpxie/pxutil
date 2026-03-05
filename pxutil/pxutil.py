@@ -765,23 +765,29 @@ class ChatAPI:
 
     def __init__(
         self,
-        url="https://api.openai.com/v1/chat/completions",
-        token=os.environ.get(
-            "OPENAI_API_KEY", None
-        ),  # default to environment variable OPENAI_API_KEY
+        model="gpt-4.1-mini",
         system_msg=None,
-        model="gpt-4o",
         remember_chat_history=True,
         max_chat_history=2,  # each chat has 2 messages, a question and an answer
     ):
-        self.url = url
-        assert token, "OpenAI token cannot be None."
-        self.token = token
         self.model = model
         self.system_msg = system_msg
         self.remember_chat_history = remember_chat_history
         self.chat_history = []  # list of past chat messages
         self.max_chat_history = max_chat_history
+
+        if model.startswith('gpt-'):
+            self.url = 'https://api.openai.com/v1/chat/completions'
+            token_name = 'OPENAI_API_KEY'
+        elif model.startswith('grok-'):
+            self.url = 'https://api.x.ai/v1/chat/completions'
+            token_name = 'XAI_API_KEY' 
+        else:
+            sys.exit(f'model {model} is not supported.')           
+        
+        self.token = os.environ.get(token_name)
+        if self.token is None:
+            sys.exit(f'Environment variable {token_name} is not set.')
 
     def chat(self, question: str):
         """Ask a question and get an answer

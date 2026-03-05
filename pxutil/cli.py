@@ -20,7 +20,7 @@ from pxutil import bashx, register_signal_ctrl_c, ChatAPI
 import pxutil as px
 
 # defaults
-Chat_Model_Default = "gpt-4.1-mini"
+Chat_Model_Default = "grok-4-fast-non-reasoning"
 
 
 def loop_main():
@@ -66,7 +66,7 @@ def chat_main():
         "-m",
         "--model",
         default=Chat_Model_Default,
-        help=f"OpenAI chatGPT model, {Chat_Model_Default}(default) etc.",
+        help=f"LLM chat models (OPENAI, XAI), {Chat_Model_Default} (default) etc.",
     )
     parser.add_argument(
         "-q",
