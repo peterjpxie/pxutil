@@ -7,43 +7,25 @@ Some handy Python utilities
 
 A sample to learn Python packaging
 
-## Install from source
-
+## Install
 ```
+# install from pypi
+pip install pxutil
+
+# install from source in edit mode
 cd <repo root>
-pip install .
-```
-~~python setup.py install~~ (deprecated and problematic)
-
-## Build distributions ( Replaced with Actions / cibuildwheel for multiple python versions and platforms)
-
-```
-# build for current python version
-rm -rf dist/* && python setup.py sdist bdist_wheel
+pip install -e .
 ```
 
-## Build and Test - cibuildwheel locally for current platform
-
+## Usage - CLI
 ```
-pip install cibuildwheel
-# build with docker
-cibuildwheel --platform linux . 
-# cibuildwheel config in pyproject.toml
-```
-
-## Publish to pypi ( Replaced with Actions / cibuildwheel for multiple python versions and platforms)
-
-```
-twine upload dist/*
-```
-
-## Github Actions
-
-The github action workflow has been configured to run build, test and publish to pypi with cibuildwheel which builds cython extension for multiple python versions and platforms.
-
-The workflow is configured to run manually, not to waste resources on each commit, or automatically when a release is created.
-
-The publish job is executed only when a release is created.
+px.chat -h      # chat cli based on X.AI and OpenAI APIs
+px.onefile -h   # alternative to files-to-prompt, but hand crafted. See --tldr for examples.
+px.token.counter -h # count LLM tokens of a give text file
+px.runc -h      # compile and run single c file with gcc
+px.ls.mod -h    # list content of a module/package: submodules, classes, functions.
+px.loop -h      # run a command in loop
+``` 
 
 ## Usage - Functions
 ```
@@ -101,14 +83,16 @@ px.setup_logger()
 px.read_dotenv(file_path='.env')
 ```
 
-## Usage - CLI
-```
-px.chat -h      # chat cli based on X.AI and OpenAI APIs
-px.onefile -h   # alternative to files-to-prompt, but hand crafted. See --tldr for examples.
-px.runc -h      # compile and run single c file with gcc
-px.ls.mod -h    # list content of a module/package: submodules, classes, functions.
-px.loop -h      # run a command in loop
-``` 
+## Github Actions
+
+The github action workflow has been configured to run build, test and publish to pypi with cibuildwheel which builds cython extension for multiple python versions and platforms.
+
+The workflow is configured to run on PR, manually or when a release is created.
+
+The publish job is executed only when a release is created.
+
+
+
 
 ## Test
 ```
@@ -139,3 +123,26 @@ setup.py        # pypi description
 tox.ini         # tox test
 pyproject.toml  # cibuildwheel
 ```
+
+## Build distributions ( Replaced with Actions / cibuildwheel for multiple python versions and platforms)
+
+```
+# build for current python version
+rm -rf dist/* && python setup.py sdist bdist_wheel
+```
+
+## Build and Test - cibuildwheel locally for current platform
+
+```
+pip install cibuildwheel
+# build with docker
+cibuildwheel --platform linux . 
+# cibuildwheel config in pyproject.toml
+```
+
+## Publish to pypi ( Replaced with Actions / cibuildwheel for multiple python versions and platforms)
+
+```
+twine upload dist/*
+```
+
