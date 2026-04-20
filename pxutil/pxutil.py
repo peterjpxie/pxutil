@@ -766,7 +766,7 @@ class ChatAPI:
     def __init__(
         self,
         model="gpt-4.1-mini",
-        system_msg=None,
+        system_msg="You are a command line terminal assistant, respond with terminal friendly text.",
         remember_chat_history=True,
         max_chat_history=2,  # each chat has 2 messages, a question and an answer
     ):
