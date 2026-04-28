@@ -128,7 +128,10 @@ pyproject.toml  # cibuildwheel
 
 ```
 # build for current python version
-rm -rf dist/* && python setup.py sdist bdist_wheel
+pip install build
+python -m build
+
+# rm -rf dist/* && python setup.py sdist bdist_wheel    (deprecated)
 ```
 
 ## Build and Test - cibuildwheel locally for current platform
