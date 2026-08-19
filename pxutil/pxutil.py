@@ -18,13 +18,14 @@ import pdb
 import requests
 
 ### Settings ###
-## log level is not used.
-# log_level_str = os.getenv(
-#     "PX_LOG_LEVEL", "ERROR"
-# )  # DEBUG, INFO, WARNING, ERROR, CRITICAL
-# LOG_LEVEL = getattr(
-#     logging, log_level_str.upper()
-# )  # convert to logging level, e.g. logging.DEBUG
+## log level, default to ERROR.
+log_level_str = os.getenv(
+    "PX_LOG_LEVEL", "ERROR"
+)  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+# convert to logging level, e.g. logging.DEBUG
+LOG_LEVEL = getattr(
+    logging, log_level_str.upper()
+)  
 
 LOG_MODULE_NAME_LEN = 8
 
@@ -190,7 +191,7 @@ def pretty_print_request_json(request, logger):
 
     logger.debug(
         "{}\n{}\n\n{}\n\n{}\n".format(
-            "-----------Request----------->",
+            "====>",
             request.method + " " + request.url,
             "\n".join(f"{k}: {v}" for k, v in request.headers.items()),
             req_body,
@@ -216,7 +217,7 @@ def pretty_print_response_json(response, logger):
 
     logger.debug(
         "{}\n{}\n\n{}\n\n{}\n".format(
-            "<-----------Response-----------",
+            "<====",
             "Status code:" + str(response.status_code),
             "\n".join(f"{k}: {v}" for k, v in response.headers.items()),
             resp_body,
@@ -782,6 +783,9 @@ class ChatAPI:
         elif model.startswith('grok-'):
             self.url = 'https://api.x.ai/v1/chat/completions'
             token_name = 'XAI_API_KEY' 
+        elif model.startswith('deepseek-'):
+            self.url = 'https://api.deepseek.com/v1/chat/completions'
+            token_name = 'DEEPSEEK_API_KEY'
         else:
             sys.exit(f'model {model} is not supported.')           
         
@@ -806,7 +810,7 @@ class ChatAPI:
         # add current question
         messages.append({"role": "user", "content": question})
         payload = {
-            "model": self.model,  # "gpt-3.5-turbo",
+            "model": self.model,
             "messages": messages,
         }
         # messages sample:
@@ -816,10 +820,13 @@ class ChatAPI:
         #        {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
         #        {"role": "user", "content": "Where was it played?"},
         #    ]
+        if self.model.startswith(("deepseek-")):
+            # disable default reason
+            payload["thinking"] = {"type": "disabled"}
 
         headers = {"Authorization": "Bearer %s" % self.token}
-        # no indent for payload to save possible tokens
-        resp = post(self.url, headers=headers, data=json.dumps(payload))
+        logger = setup_logger(LOG_LEVEL,"~/pxutil.log")
+        resp = post(self.url, headers=headers, data=json.dumps(payload), logger=logger)
         if isinstance(resp, Exception):
             return Exception("Chat API request failed with error: %s." % resp)
 
