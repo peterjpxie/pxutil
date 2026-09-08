@@ -825,7 +825,7 @@ class ChatAPI:
             payload["thinking"] = {"type": "disabled"}
 
         headers = {"Authorization": "Bearer %s" % self.token}
-        logger = setup_logger(LOG_LEVEL,"~/pxutil.log")
+        logger = setup_logger(LOG_LEVEL,"~/.pxutil.log")
         resp = post(self.url, headers=headers, data=json.dumps(payload), logger=logger)
         if isinstance(resp, Exception):
             return Exception("Chat API request failed with error: %s." % resp)
