@@ -20,7 +20,7 @@ from pxutil import bashx, register_signal_ctrl_c, ChatAPI
 import pxutil as px
 
 # defaults
-Chat_Model_Default = "deepseek-v4-flash"
+Chat_Model_Default = "deepseek-flash"
 
 
 def loop_main():
