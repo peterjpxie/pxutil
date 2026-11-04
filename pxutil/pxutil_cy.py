@@ -18,6 +18,7 @@ real    0m0.025s
 user    0m0.020s
 sys     0m0.000s
 """
+
 import cython
 
 

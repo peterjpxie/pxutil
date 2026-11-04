@@ -1,7 +1,6 @@
 # Table of Contents
 
 * [pxutil.pxutil](#pxutil.pxutil)
-  * [log\_level\_str](#pxutil.pxutil.log_level_str)
   * [normal\_path](#pxutil.pxutil.normal_path)
   * [CustomFormatter](#pxutil.pxutil.CustomFormatter)
   * [setup\_logger](#pxutil.pxutil.setup_logger)
@@ -35,12 +34,6 @@
 
 Some handy utilities from Peter Jiping Xie
 
-<a id="pxutil.pxutil.log_level_str"></a>
-
-#### log\_level\_str
-
-DEBUG, INFO, WARNING, ERROR, CRITICAL
-
 <a id="pxutil.pxutil.normal_path"></a>
 
 #### normal\_path
@@ -51,17 +44,19 @@ def normal_path(path: str, resolve_symlink=False)
 
 return a normalized path
 
-resolve_symlink: resolve symbolic link to the actual path
+**Arguments**:
 
-calls os.path.x:
-expanduser: ~/a.txt => /home/user/a.txt
-expandvars: '$HOME/mydir' => /home/user/mydir
-normpath: /usr/local//../bin/ => /usr/bin
-realpath: a.txt => /home/user/project/a.txt (full path);  /usr/local/bin/python3 (symlink) => /usr/bin/python3.8
-abspath: a.txt => /home/user/project/a.txt (full path); /usr/local/bin/python3 (symlink) => /usr/local/bin/python3;
-/usr/local//../bin/ => /usr/bin
-
-Note: abspath does half realpath + normpath.
+- `resolve_symlink` - resolve symbolic link to the actual path
+  
+  calls os.path.x:
+- `expanduser` - ~/a.txt => /home/user/a.txt
+- `expandvars` - '$HOME/mydir' => /home/user/mydir
+- `normpath` - /usr/local//../bin/ => /usr/bin
+- `realpath` - a.txt => /home/user/project/a.txt (full path);  /usr/local/bin/python3 (symlink) => /usr/bin/python3.8
+- `abspath` - a.txt => /home/user/project/a.txt (full path); /usr/local/bin/python3 (symlink) => /usr/local/bin/python3;
+  /usr/local//../bin/ => /usr/bin
+  
+- `Note` - abspath does half realpath + normpath.
 
 <a id="pxutil.pxutil.CustomFormatter"></a>
 
@@ -124,7 +119,9 @@ def pretty_json(json_str)
 
 return pretty formatted json string if possible, otherwise return the original
 
-json_str: The input could be anything, e.g., bytes, and it just returns the original if it is not a valid json string.
+**Arguments**:
+
+- `json_str` - The input could be anything, e.g., bytes, and it just returns the original if it is not a valid json string.
 
 <a id="pxutil.pxutil.pretty_print_request_json"></a>
 
@@ -137,10 +134,10 @@ def pretty_print_request_json(request, logger)
 pretty print request in json format if possible, otherwise print in text or bytes
 Note it may differ from the actual request as it is pretty formatted.
 
-Params
-------
-request:    requests' request object
-logger:     logging instance
+**Arguments**:
+
+- `request` - requests' request object.
+- `logger` - logging instance.
 
 <a id="pxutil.pxutil.pretty_print_response_json"></a>
 
@@ -153,10 +150,10 @@ def pretty_print_response_json(response, logger)
 pretty print response in json format
 If failing to parse body in json format, print in text.
 
-Params
-------
-response:   requests' response object
-logger:     logging instance
+**Arguments**:
+
+- `response` - requests' response object.
+- `logger` - logging instance.
 
 <a id="pxutil.pxutil.post"></a>
 
@@ -246,15 +243,23 @@ subprocess.run with intuitive options to execute system commands just like shell
 
 Inspired by https://pypi.org/project/bash/.
 
-cmd: command in a string, e.g. 'ls -l'
-encoding: encoding to decode output, e.g. 'utf-8'. Auto detected if None.
-return: CompletedProcess object in text (decode as locale encoding), with attributes stdout, stderr and returncode.
+**Arguments**:
 
-Usage example:
-ret = bash('ls')
-print(ret.stdout, ret.stderr, ret.returncode)
+- `cmd` - command in a string, e.g. 'ls -l'
+- `encoding` - encoding to decode output, e.g. 'utf-8'. Auto detected if None.
+  
 
-Warning of using shell=True: https://docs.python.org/3/library/subprocess.html#security-considerations
+**Returns**:
+
+  CompletedProcess object in text (decode as locale encoding), with attributes stdout, stderr and returncode.
+  
+
+**Example**:
+
+  ret = bash('ls')
+  print(ret.stdout, ret.stderr, ret.returncode)
+  
+  Warning of using shell=True: https://docs.python.org/3/library/subprocess.html#security-considerations
 
 <a id="pxutil.pxutil.bashx"></a>
 
@@ -269,27 +274,31 @@ run system cmd like bash -x
 Print the cmd with + prefix before executing
 Don't capture the output or error
 
-Arguments
----------
-cmd: string - command to run
-x:  When True, print the command with prefix + like shell 'bash -x' before running it
-e:  When True, exit the python program when returncode is not 0, like shell 'bash -e'.
+**Arguments**:
 
-return
-------
-CompletedProcess object with only returncode.
+- `cmd` - string - command to run
+- `x` - When True, print the command with prefix + like shell 'bash -x' before running it
+- `e` - When True, exit the python program when returncode is not 0, like shell 'bash -e'.
+  
 
-Shell environment variables
----------------------------
-You can set the following environment variables which have the same effect of but overwrite argument options.
-BASH_CMD_PRINT=True     same as x=True
-BASH_EXIT_ON_ERROR=True same as e=True
+**Returns**:
 
-Usage example:
-ret = shx('ls')
-print(ret.returncode)
+  CompletedProcess object with only returncode.
+  
 
-Warning of using shell=True: https://docs.python.org/3/library/subprocess.html#security-considerations
+**Notes**:
+
+  You can set the following environment variables which have the same effect of but overwrite argument options.
+  BASH_CMD_PRINT=True     same as x=True
+  BASH_EXIT_ON_ERROR=True same as e=True
+  
+
+**Example**:
+
+  ret = bashx('ls')
+  print(ret.returncode)
+  
+  Warning of using shell=True: https://docs.python.org/3/library/subprocess.html#security-considerations
 
 <a id="pxutil.pxutil.grep"></a>
 
@@ -307,7 +316,9 @@ return lines matching a pattern in a string or a file.
 
 - `pattern` - regular expression string
   
-  Usage examples:
+
+**Example**:
+
   result = grep('keyword', filename='a.txt' )
   for i in result:
   print(i)
@@ -329,10 +340,10 @@ Replace in place directly on a file.
 
 **Arguments**:
 
-  files - single or list of files, e.g. 'a.txt' or ['a.txt',]
-  old - old string to replace
-  new - new string
-  backup - backup file suffix, e.g. '.bak'. None means no backup
+- `files` - single or list of files, e.g. 'a.txt' or ['a.txt',]
+- `old` - old string to replace
+- `new` - new string
+- `backup` - backup file suffix, e.g. '.bak'. None means no backup
 
 <a id="pxutil.pxutil.time2seconds"></a>
 
@@ -344,10 +355,16 @@ def time2seconds(time)
 
 delta time string to number of seconds
 
-time: e.g. '2d' for 2 days, supported units: d-day, h-hour, m-minute, s-second
-return: integer number of seconds
+**Arguments**:
 
-Note: Month and year duration varies. Not worth doing for the sake of simplicity.
+- `time` - e.g. '2d' for 2 days, supported units: d-day, h-hour, m-minute, s-second
+  
+
+**Returns**:
+
+  integer number of seconds
+  
+- `Note` - Month and year duration varies. Not worth doing for the sake of simplicity.
 
 <a id="pxutil.pxutil.purge"></a>
 
@@ -359,16 +376,21 @@ def purge(dir, age="0s", filename_filter="*")
 
 Purge files and subfolders older than certain age
 
-Params
-------
-dir:   directory to purge files and subfolders
-age:    e.g. '2h', support d-day, h-hour, m-minute, s-second
-filename_filter:  glob format, e.g. debug.log*
+**Arguments**:
 
-Usage examples:
-purge('/root/tmp/', '24h', 'debug.log*')
+- `dir` - directory to purge files and subfolders
+- `age` - e.g. '2h', support d-day, h-hour, m-minute, s-second
+- `filename_filter` - glob format, e.g. debug.log*
+  
 
-Note: It retains the parent folder dir. Use shutil.rmtree if you want to remove the folder as well.
+**Example**:
+
+  purge('/root/tmp/', '24h', 'debug.log*')
+  
+
+**Notes**:
+
+  It retains the parent folder dir. Use shutil.rmtree if you want to remove the folder as well.
 
 <a id="pxutil.pxutil.exit_on_exception"></a>
 
@@ -422,16 +444,20 @@ def set_work_path(path)
 
 With statement to set the cwd within the context
 
-Params
-------
-path: The path string to the cwd. Note this path will be automatically normalized by normal_path().
+**Arguments**:
 
-Yield: cwd path string
+- `path` - The path string to the cwd. Note this path will be automatically normalized by normal_path().
+  
+
+**Yields**:
+
+  cwd path string
+  
 
 **Example**:
 
-with set_work_path('./tmp') as p:
-os.system('ls')
+  with set_work_path('./tmp') as p:
+  os.system('ls')
 
 <a id="pxutil.pxutil.prepend_sys_path"></a>
 
@@ -444,13 +470,20 @@ def prepend_sys_path(path)
 
 With statement to prepend path to sys.path within the context
 
-path: The path string to prepend. Note this path will be automatically normalized by normal_path().
-Yield: normalized path string
+**Arguments**:
+
+- `path` - The path string to prepend. Note this path will be automatically normalized by normal_path().
+  
+
+**Yields**:
+
+  normalized path string
+  
 
 **Example**:
 
-with prepend_sys_path('./tmp') as p:
-import this_module
+  with prepend_sys_path('./tmp') as p:
+  import this_module
 
 <a id="pxutil.pxutil.import_any"></a>
 
@@ -464,14 +497,20 @@ import any module from a path regardless of sys.path
 
 It will automatically prepend the parent directory of path to sys.path if not already in, and remove it after import.
 
-Params
-------
-path: path to a module, e.g., ./config/a.py, /home/user/config/a.py
-return: imported module
+**Arguments**:
 
-Usage:
-a = import_any('./config/a.py')
-a.func()
+- `path` - path to a module, e.g., ./config/a.py, /home/user/config/a.py
+  
+
+**Returns**:
+
+  imported module
+  
+
+**Example**:
+
+  a = import_any('./config/a.py')
+  a.func()
 
 <a id="pxutil.pxutil.ChatAPI"></a>
 
@@ -544,7 +583,9 @@ def chat(question: str)
 
 Ask a question and get an answer
 
-return: answer str or Exception
+**Returns**:
+
+  answer str or Exception
 
 <a id="pxutil.pxutil.list_module_contents"></a>
 
@@ -566,9 +607,15 @@ def read_dotenv(file_path=".env")
 
 Reads a .env file (ini file w/o section header) and returns a dict of environment variables like os.environ.
 
-file_path: str, path to the .env file.
-return: dict with key-value pairs of environment variables or Exception if any.
-Note it is all string values. And return empty dict {} if no environment variables set.
+**Arguments**:
+
+- `file_path` - str, path to the .env file.
+  
+
+**Returns**:
+
+  dict with key-value pairs of environment variables or Exception if any.
+  Note it is all string values. And return empty dict {} if no environment variables set.
 
 <a id="pxutil.pxutil.is_text_file"></a>
 

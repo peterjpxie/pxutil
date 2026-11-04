@@ -19,13 +19,10 @@ import requests
 
 ### Settings ###
 ## log level, default to ERROR.
-log_level_str = os.getenv(
-    "PX_LOG_LEVEL", "ERROR"
-)  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+# DEBUG, INFO, WARNING, ERROR, CRITICAL
+log_level_str = os.getenv("PX_LOG_LEVEL", "ERROR")
 # convert to logging level, e.g. logging.DEBUG
-LOG_LEVEL = getattr(
-    logging, log_level_str.upper()
-)  
+LOG_LEVEL = getattr(logging, log_level_str.upper())
 
 LOG_MODULE_NAME_LEN = 8
 
@@ -36,7 +33,8 @@ root_path = path.dirname(path.abspath(__file__))
 def normal_path(path: str, resolve_symlink=False):
     """return a normalized path
 
-    resolve_symlink: resolve symbolic link to the actual path
+    Args:
+        resolve_symlink: resolve symbolic link to the actual path
 
     calls os.path.x:
     expanduser: ~/a.txt => /home/user/a.txt
@@ -154,7 +152,8 @@ def setup_logger(
 def pretty_json(json_str):
     """return pretty formatted json string if possible, otherwise return the original
 
-    json_str: The input could be anything, e.g., bytes, and it just returns the original if it is not a valid json string.
+    Args:
+        json_str: The input could be anything, e.g., bytes, and it just returns the original if it is not a valid json string.
     """
     import json
 
@@ -171,10 +170,9 @@ def pretty_print_request_json(request, logger):
     """pretty print request in json format if possible, otherwise print in text or bytes
     Note it may differ from the actual request as it is pretty formatted.
 
-    Params
-    ------
-    request:    requests' request object
-    logger:     logging instance
+    Args:
+        request: requests' request object.
+        logger: logging instance.
     """
     # pretty json if possible
     req_body = pretty_json(request.body)
@@ -211,10 +209,9 @@ def pretty_print_response_json(response, logger):
     """pretty print response in json format
     If failing to parse body in json format, print in text.
 
-    Params
-    ------
-    response:   requests' response object
-    logger:     logging instance
+    Args:
+        response: requests' response object.
+        logger: logging instance.
     """
     try:
         resp_data = response.json()
@@ -382,13 +379,16 @@ def bash(cmd: str, encoding=None):
 
     Inspired by https://pypi.org/project/bash/.
 
-    cmd: command in a string, e.g. 'ls -l'
-    encoding: encoding to decode output, e.g. 'utf-8'. Auto detected if None.
-    return: CompletedProcess object in text (decode as locale encoding), with attributes stdout, stderr and returncode.
+    Args:
+        cmd: command in a string, e.g. 'ls -l'
+        encoding: encoding to decode output, e.g. 'utf-8'. Auto detected if None.
 
-    Usage example:
-    ret = bash('ls')
-    print(ret.stdout, ret.stderr, ret.returncode)
+    Returns:
+        CompletedProcess object in text (decode as locale encoding), with attributes stdout, stderr and returncode.
+
+    Example:
+        ret = bash('ls')
+        print(ret.stdout, ret.stderr, ret.returncode)
 
     Warning of using shell=True: https://docs.python.org/3/library/subprocess.html#security-considerations
     """
@@ -419,25 +419,22 @@ def bashx(cmd, x=True, e=False):
     Print the cmd with + prefix before executing
     Don't capture the output or error
 
-    Arguments
-    ---------
-    cmd: string - command to run
-    x:  When True, print the command with prefix + like shell 'bash -x' before running it
-    e:  When True, exit the python program when returncode is not 0, like shell 'bash -e'.
+    Args:
+        cmd: string - command to run
+        x: When True, print the command with prefix + like shell 'bash -x' before running it
+        e: When True, exit the python program when returncode is not 0, like shell 'bash -e'.
 
-    return
-    ------
-    CompletedProcess object with only returncode.
+    Returns:
+        CompletedProcess object with only returncode.
 
-    Shell environment variables
-    ---------------------------
-    You can set the following environment variables which have the same effect of but overwrite argument options.
-    BASH_CMD_PRINT=True     same as x=True
-    BASH_EXIT_ON_ERROR=True same as e=True
+    Note:
+        You can set the following environment variables which have the same effect of but overwrite argument options.
+        BASH_CMD_PRINT=True     same as x=True
+        BASH_EXIT_ON_ERROR=True same as e=True
 
-    Usage example:
-    ret = shx('ls')
-    print(ret.returncode)
+    Example:
+        ret = bashx('ls')
+        print(ret.returncode)
 
     Warning of using shell=True: https://docs.python.org/3/library/subprocess.html#security-considerations
     """
@@ -487,16 +484,16 @@ def grep(pattern, string=None, filename=None):
 
     return lines matching a pattern in a string or a file.
 
-    Parameters:
-    pattern: regular expression string
+    Args:
+        pattern: regular expression string
 
-    Usage examples:
-    result = grep('keyword', filename='a.txt' )
-    for i in result:
-        print(i)
+    Example:
+        result = grep('keyword', filename='a.txt' )
+        for i in result:
+            print(i)
 
-    Notes:
-    If the matched list is too big, you can modify it to use yield generator.
+    Note:
+        If the matched list is too big, you can modify it to use yield generator.
     """
     if string == None and filename == None:
         print("grep: No string nor filename provided in the arguments.")
@@ -517,11 +514,11 @@ def replace_in_file(files, old, new, backup=""):
     """
     Replace in place directly on a file.
 
-    Arguments:
-    files - single or list of files, e.g. 'a.txt' or ['a.txt',]
-    old - old string to replace
-    new - new string
-    backup - backup file suffix, e.g. '.bak'. None means no backup
+    Args:
+        files: single or list of files, e.g. 'a.txt' or ['a.txt',]
+        old: old string to replace
+        new: new string
+        backup: backup file suffix, e.g. '.bak'. None means no backup
     """
     import fileinput
 
@@ -535,8 +532,11 @@ def replace_in_file(files, old, new, backup=""):
 def time2seconds(time):
     """delta time string to number of seconds
 
-    time: e.g. '2d' for 2 days, supported units: d-day, h-hour, m-minute, s-second
-    return: integer number of seconds
+    Args:
+        time: e.g. '2d' for 2 days, supported units: d-day, h-hour, m-minute, s-second
+
+    Returns:
+        integer number of seconds
 
     Note: Month and year duration varies. Not worth doing for the sake of simplicity.
     """
@@ -552,16 +552,16 @@ def time2seconds(time):
 def purge(dir, age="0s", filename_filter="*"):
     """Purge files and subfolders older than certain age
 
-    Params
-    ------
-    dir:   directory to purge files and subfolders
-    age:    e.g. '2h', support d-day, h-hour, m-minute, s-second
-    filename_filter:  glob format, e.g. debug.log*
+    Args:
+        dir: directory to purge files and subfolders
+        age: e.g. '2h', support d-day, h-hour, m-minute, s-second
+        filename_filter: glob format, e.g. debug.log*
 
-    Usage examples:
-    purge('/root/tmp/', '24h', 'debug.log*')
+    Example:
+        purge('/root/tmp/', '24h', 'debug.log*')
 
-    Note: It retains the parent folder dir. Use shutil.rmtree if you want to remove the folder as well.
+    Note:
+        It retains the parent folder dir. Use shutil.rmtree if you want to remove the folder as well.
     """
     import os
     import time
@@ -653,15 +653,15 @@ def register_signal_ctrl_c():
 def set_work_path(path):
     """With statement to set the cwd within the context
 
-    Params
-    ------
-    path: The path string to the cwd. Note this path will be automatically normalized by normal_path().
+    Args:
+        path: The path string to the cwd. Note this path will be automatically normalized by normal_path().
 
-    Yield: cwd path string
+    Yields:
+        cwd path string
 
     Example:
-    with set_work_path('./tmp') as p:
-        os.system('ls')
+        with set_work_path('./tmp') as p:
+            os.system('ls')
     """
     origin = os.getcwd()
     try:
@@ -676,12 +676,15 @@ def set_work_path(path):
 def prepend_sys_path(path):
     """With statement to prepend path to sys.path within the context
 
-    path: The path string to prepend. Note this path will be automatically normalized by normal_path().
-    Yield: normalized path string
+    Args:
+        path: The path string to prepend. Note this path will be automatically normalized by normal_path().
+
+    Yields:
+        normalized path string
 
     Example:
-    with prepend_sys_path('./tmp') as p:
-        import this_module
+        with prepend_sys_path('./tmp') as p:
+            import this_module
     """
     sys_path_changed = False
     try:
@@ -700,12 +703,13 @@ def import_any(path: str):
 
     It will automatically prepend the parent directory of path to sys.path if not already in, and remove it after import.
 
-    Params
-    ------
-    path: path to a module, e.g., ./config/a.py, /home/user/config/a.py
-    return: imported module
+    Args:
+        path: path to a module, e.g., ./config/a.py, /home/user/config/a.py
 
-    Usage:
+    Returns:
+        imported module
+
+    Example:
         a = import_any('./config/a.py')
         a.func()
     """
@@ -789,26 +793,27 @@ class ChatAPI:
         self.chat_history = []  # list of past chat messages
         self.max_chat_history = max_chat_history
 
-        if model.startswith('gpt-'):
-            self.url = 'https://api.openai.com/v1/chat/completions'
-            token_name = 'OPENAI_API_KEY'
-        elif model.startswith('grok-'):
-            self.url = 'https://api.x.ai/v1/chat/completions'
-            token_name = 'XAI_API_KEY' 
-        elif model.startswith('deepseek-'):
-            self.url = 'https://api.deepseek.com/v1/chat/completions'
-            token_name = 'DEEPSEEK_API_KEY'
+        if model.startswith("gpt-"):
+            self.url = "https://api.openai.com/v1/chat/completions"
+            token_name = "OPENAI_API_KEY"
+        elif model.startswith("grok-"):
+            self.url = "https://api.x.ai/v1/chat/completions"
+            token_name = "XAI_API_KEY"
+        elif model.startswith("deepseek-"):
+            self.url = "https://api.deepseek.com/v1/chat/completions"
+            token_name = "DEEPSEEK_API_KEY"
         else:
-            sys.exit(f'model {model} is not supported.')           
-        
+            sys.exit(f"model {model} is not supported.")
+
         self.token = os.environ.get(token_name)
         if self.token is None:
-            sys.exit(f'Environment variable {token_name} is not set.')
+            sys.exit(f"Environment variable {token_name} is not set.")
 
     def chat(self, question: str):
         """Ask a question and get an answer
 
-        return: answer str or Exception
+        Returns:
+            answer str or Exception
         """
         messages = []
         # add system message
@@ -837,7 +842,7 @@ class ChatAPI:
             payload["thinking"] = {"type": "disabled"}
 
         headers = {"Authorization": "Bearer %s" % self.token}
-        logger = setup_logger(LOG_LEVEL,"~/.pxutil.log")
+        logger = setup_logger(LOG_LEVEL, "~/.pxutil.log")
         resp = post(self.url, headers=headers, data=json.dumps(payload), logger=logger)
         if isinstance(resp, Exception):
             return Exception("Chat API request failed with error: %s." % resp)
@@ -899,8 +904,11 @@ def read_dotenv(file_path=".env"):
     """
     Reads a .env file (ini file w/o section header) and returns a dict of environment variables like os.environ.
 
-    file_path: str, path to the .env file.
-    return: dict with key-value pairs of environment variables or Exception if any.
+    Args:
+        file_path: str, path to the .env file.
+
+    Returns:
+        dict with key-value pairs of environment variables or Exception if any.
         Note it is all string values. And return empty dict {} if no environment variables set.
     """
     env_vars = {}
