@@ -1,0 +1,29 @@
+loaders:
+  - type: python
+    search_path: [.]
+    # narrow the parse to specific modules / whole packages
+    modules: [pxutil.pxutil, ]
+    # packages: [mypkg]        # recursive alternative
+
+processors:
+  - type: google                # Args:/Returns:/Raises: -> Markdown
+  # - type: sphinx              # if you also have reST fragments
+  - type: filter
+    documented_only: true       # drop anything with an empty docstring
+    exclude_private: true       # drop names starting with "_"
+    exclude_special: true       # drop __dunder__
+    skip_empty_modules: true    # drop modules left with no members
+    # exclude the module's self-test entry point; `default()` keeps the
+    # documented_only/exclude_private/exclude_special rules above
+    expression: "'.'.join(o.name for o in obj.path) != 'pxutil.pxutil.main' and default()"
+    ## the expression is evaluated on every node — module → class → method/attribute.
+    # expression: |
+    #   name in ('mypkg', 'mypkg.foo', 'mypkg.Bar')
+    #   or name.startswith('mypkg.Bar.')
+  - type: smart
+  - type: crossref              # resolve cross-references between objects
+
+renderer:
+  type: markdown
+  filename: docs/API.md
+  render_toc: true

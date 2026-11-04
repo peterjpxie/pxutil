@@ -28,6 +28,8 @@ px.loop -h      # run a command in loop
 ``` 
 
 ## Usage - Functions
+
+See also docs/API.md for more details.
 ```
 import pxutil as px
 
@@ -91,9 +93,6 @@ The workflow is configured to run on PR, manually or when a release is created.
 
 The publish job is executed only when a release is created.
 
-
-
-
 ## Test
 ```
 git clone https://github.com/peterjpxie/pxutil.git
@@ -149,3 +148,13 @@ cibuildwheel --platform linux .
 twine upload dist/*
 ```
 
+## docstring style and API doc generation
+[Google style](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) of docstring is used.
+
+`pydoc-markdown` is used to generate API document based on docstring. `pydoc-markdown.yml` is the configuration file for filtering.
+
+To generate doc:
+```
+pip install pydoc-markdown
+pydoc-markdown
+```

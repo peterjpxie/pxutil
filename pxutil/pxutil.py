@@ -76,19 +76,27 @@ def setup_logger(
     maxBytes=1024000,
     backup_count=5,
 ):
-    """Function to setup as many loggers as you want.
+    """Set up a logger with console or rotating file output.
 
-    level:          logging level
-    log_file:       path to the log file (path will be auto normalized) or None for console logging
-    name:           logger name   NB: To create multiple log files, must use different logger name.
-    formatter:      logging.Formatter object, if None, consider formatter_simple_time_only if true or use default_formatter below.
-    formatter_simple_time_only:  Boolean, if true and formatter is None, use this format: logging.Formatter("%(asctime)s: %(message)s").
-    mode:           file open mode if rotate is False, 'w' for write, 'a' for append (default)
-    rotate:         whether to rotate log file
-    maxBytes:       maxBytes for rotating file handler
-    backup_count:   backup_count for rotating file handler
+    Args:
+        level: Logging level.
+        log_file (str): Path to the log file (path will be auto normalized), or None
+            for console logging.
+        name (str): Logger name. NB: To create multiple log files, must use
+            different logger name.
+        formatter: logging.Formatter object. If None, use
+            formatter_simple_time_only if true, otherwise use the default
+            formatter.
+        formatter_simple_time_only: If True and formatter is None, use
+            logging.Formatter("%(asctime)s: %(message)s").
+        mode: File open mode if rotate is False, 'w' for write, 'a' for
+            append (default).
+        rotate (boolean): Whether to rotate log file.
+        maxBytes: maxBytes for rotating file handler.
+        backup_count: backup_count for rotating file handler.
 
-    return: logger object
+    Returns:
+        The logger object.
     """
     logger = logging.getLogger(name)
     # Check if logger is already configured with the name.
@@ -269,34 +277,38 @@ def request(
     logger=None,
     **kwargs,
 ):
-    """
-    Common request function with below features, which can be used for any request methods such as 'POST', GET, OPTIONS, HEAD, POST, PUT, PATCH, or DELETE:
+    """Send a request with common helpers, for any HTTP method.
+
+    Features:
         - append common headers (when amend_headers=True)
         - print request and response in API log file
         - Take care of request exception and error response codes (>=400) and return None, so you only need to care normal json response.
         - arguments are the same as requests.request, except amend_headers.
 
-    Arguments
-    ---------
-    method:         Same as requests.request
-    url:            Same as requests.request
-    data:           Same as requests.request
-    headers:        Same as requests.request
-    files:          Same as requests.request
-    auth:           Same as requests.request
-    verify:         Same as requests.request. False - Disable SSL certificate verification, set to False to test dev server with self-signed certificate.
-    amend_headers:  boolean, Append common headers, e.g. set Content-Type to "application/json" if body is json
-    content_type:   str, set header Content-Type if provided
-    session:        requests.Session() instance, send requests in the provided session if set, and will maintain session cookies.
-    logger:         logging instance, e.g., logging.getLogger(), to pretty log API request and response in INFO level (please set proper level in the logger).
-                    Default to None, no logging.
-    kwargs:         Other arguments requests.request takes.
+    Args:
+        method: Same as requests.request.
+        url: Same as requests.request.
+        data: Same as requests.request. NA for GET.
+        headers: Same as requests.request.
+        files: Same as requests.request.
+        auth: Same as requests.request. NA for POST.
+        verify: Same as requests.request. False disables SSL certificate
+            verification, e.g. to test a dev server with self-signed
+            certificate.
+        amend_headers: Append common headers, e.g. set Content-Type to
+            "application/json" if body is json. NA for GET.
+        content_type: Set header Content-Type if provided.
+        session: requests.Session() instance; send requests in the provided
+            session if set, and maintain session cookies.
+        logger: logging instance, e.g. logging.getLogger(), to pretty log API
+            request and response in INFO level (please set proper level in the
+            logger). Default to None, no logging.
+        **kwargs: Other arguments requests.request takes.
 
-    Return: response decoded as dict if possible,
-            or decoded text if not json,
-            or original bytes if decoding fails (not likely),
-            or '' if response has no body,
-            or Exception if any error or response code >=400.
+    Returns:
+        Response decoded as dict if possible, decoded text if not json,
+        original bytes if decoding fails (not likely), '' if response has no
+        body, or Exception if any error or response code >=400.
     """
     # append common headers
     # deep copy headers to avoid using the same headers object (default {}) in different requests
